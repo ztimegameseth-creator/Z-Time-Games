@@ -1,15 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Z-Time Games</title>
-    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -90,7 +86,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Reusable Card Style from Screenshot */
+        /* Reusable Card Style */
         .z-card {
             background-color: var(--card-bg);
             border-radius: 14px;
@@ -114,7 +110,7 @@
             margin-bottom: 15px;
         }
 
-        /* Buttons (Deposit/Withdraw Style) */
+        /* Buttons */
         .btn-group {
             display: flex;
             gap: 12px;
@@ -146,17 +142,13 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Grid Stats (As seen in Wallet Screenshot) */
+        /* Grid Stats (Wallet Screen) */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             padding-top: 15px;
             text-align: center;
-        }
-
-        .stat-item border-r {
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .stat-num {
@@ -169,7 +161,7 @@
             color: var(--text-muted);
         }
 
-        /* Game Section (Home) */
+        /* Game Card */
         .game-card {
             background: linear-gradient(135deg, #1e2638, #151a24);
             border-radius: 15px;
@@ -180,7 +172,7 @@
             border-left: 5px solid var(--accent-blue);
         }
 
-        /* Coin Flip Mini Interface */
+        /* Coin Flip Interface */
         .coin-box {
             text-align: center;
             margin: 20px 0;
@@ -202,7 +194,7 @@
             box-shadow: 0 0 15px rgba(255,215,0,0.4);
         }
 
-        /* Profile Details List */
+        /* Details List */
         .detail-row {
             display: flex;
             justify-content: space-between;
@@ -214,7 +206,7 @@
             font-weight: 600;
         }
 
-        /* Bottom Nav Bar */
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -251,7 +243,6 @@
 </head>
 <body>
 
-    <!-- App Header -->
     <div class="app-header">
         <div class="brand-logo">Z-TIME</div>
         <div class="top-status">
@@ -259,7 +250,6 @@
         </div>
     </div>
 
-    <!-- 1. GAMES VIEW (HOME) -->
     <div id="view-games" class="view-content active">
         <h3 style="margin-bottom: 15px;">🎮 Games Zone</h3>
         <div class="game-card">
@@ -270,7 +260,6 @@
             <button class="z-btn btn-primary" onclick="openCoinGame()" style="flex: none; padding: 8px 15px;">Play</button>
         </div>
 
-        <!-- Coin Game Modal/Box (Hidden by Default) -->
         <div id="coin-game-box" class="z-card" style="display:none; margin-top:20px;">
             <div class="coin-box">
                 <div id="main-coin" class="coin">?</div>
@@ -283,14 +272,13 @@
         </div>
     </div>
 
-    <!-- 2. WALLET VIEW (From Screenshot 1) -->
     <div id="view-wallet" class="view-content">
         <p class="card-label">Account Funds</p>
         <h2 style="margin-bottom: 15px;">Wallet</h2>
 
         <div class="btn-group">
-            <button class="z-btn btn-primary" onclick="alert('የቴሌብር/ባንክ ማስገቢያ ፎርም')"><i class="fa-solid fa-plus"></i> Deposit</button>
-            <button class="z-btn btn-secondary" onclick="alert('ገንዘብ ማውጫ ፎርም')"><i class="fa-solid fa-minus"></i> Withdraw</button>
+            <button class="z-btn btn-primary" onclick="alert('የቴሌብር/ባንክ ማስገቢያ ፎርም በቅርቡ ይዘጋጃል!')"><i class="fa-solid fa-plus"></i> Deposit</button>
+            <button class="z-btn btn-secondary" onclick="alert('የማውጫ ፎርም በቅርቡ ይዘጋጃል!')"><i class="fa-solid fa-minus"></i> Withdraw</button>
         </div>
 
         <div class="z-card">
@@ -319,7 +307,17 @@
         </div>
     </div>
 
-    <!-- 3. PROFILE VIEW (From Screenshot 2) -->
+    <div id="view-invite" class="view-content">
+        <p class="card-label">Earn Money</p>
+        <h2 style="margin-bottom: 15px;">Invite Friends</h2>
+        <div class="z-card" style="text-align: center;">
+            <i class="fa-solid fa-gift" style="font-size: 50px; color: var(--accent-blue); margin-bottom: 15px;"></i>
+            <h4>ጓደኞችዎን ይጋብዙ እና ይሸለሙ!</h4>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 10px 0 20px;">እያንዳንዱ ሰው የእርስዎን ሊንክ ተጠቅሞ ሲጫወት የኮሚሽን ክፍያ ያገኛሉ።</p>
+            <button class="z-btn btn-primary" onclick="alert('የሪፈራል ሊንክዎ በቅርቡ ይዘጋጃል!')">Copy Invite Link</button>
+        </div>
+    </div>
+
     <div id="view-profile" class="view-content">
         <p class="card-label">Account Center</p>
         <h2 style="margin-bottom: 15px;">Profile</h2>
@@ -335,41 +333,85 @@
         <div class="z-card">
             <p class="card-label">Account Details</p>
             <div class="detail-row"><span>Phone</span><span style="color:var(--text-muted);">Not set</span></div>
-            <div class="detail-row"><span>Member ID</span><span id="member-id">852598...</span></div>
+            <div class="detail-row"><span>Member ID</span><span id="member-id">-</span></div>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchView('view-games', this)"><i class="fa-solid fa-gamepad"></i>Games</div>
         <div class="nav-item" onclick="switchView('view-wallet', this)"><i class="fa-solid fa-wallet"></i>Wallet</div>
+        <div class="nav-item" onclick="switchView('view-invite', this)"><i class="fa-solid fa-gift"></i>Invite</div>
         <div class="nav-item" onclick="switchView('view-profile', this)"><i class="fa-solid fa-user"></i>Profile</div>
     </div>
 
     <script>
-        // Initialize Telegram WebApp
+        // 1. Initialize Telegram WebApp
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Temporary Supabase Client Initialization (Will update with real keys)
-        let supabase; 
-        let userBalance = 100.00; // ለሙከራ ያህል የተቀመጠ መነሻ ብር
+        // 2. SUPABASE CONNECTION (ቁልፎችህ አስቀድመው ተስተካክለዋል)
+        const SUPABASE_URL = "https://wjmlmtebrzeikhqevryr.supabase.co"; 
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbG1sdGVicnplaWtocWV2cnlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjQzMTksImV4cCI6MjA5NjQ0MDMxOX0.5iX64N67C5rhBcsBWCty6koLDNN_7XW2Nfo7jSbOu3U";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // UI Updates with Telegram User Data
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const user = tg.initDataUnsafe.user;
-            document.getElementById('profile-name').innerText = user.username ? `@${user.username}` : user.first_name;
-            document.getElementById('user-initial').innerText = user.first_name.charAt(0).toUpperCase();
-            document.getElementById('member-id').innerText = user.id;
-        } else {
-            document.getElementById('profile-name').innerText = "Guest Player";
-            document.getElementById('member-id').innerText = "12345678";
+        let currentUser = null;
+
+        // 3. AUTOMATIC REGISTRATION & LOGIN
+        async function authenticateUser() {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const tgUser = tg.initDataUnsafe.user;
+                
+                // በዳታቤዝ ውስጥ ተጠቃሚው መኖሩን ማረጋገጥ
+                let { data: user, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('telegram_id', tgUser.id)
+                    .single();
+
+                if (error && error.code === 'PGRST116') {
+                    // አዲስ ተጠቃሚ ከሆነ መመዝገብ (Sign Up)
+                    const { data: newUser, error: insertError } = await supabase
+                        .from('users')
+                        .insert([{ 
+                            telegram_id: tgUser.id, 
+                            username: tgUser.username || '', 
+                            first_name: tgUser.first_name || 'User',
+                            balance: 0.00  
+                        }])
+                        .select()
+                        .single();
+
+                    if (!insertError) currentUser = newUser;
+                } else {
+                    // የቆየ ተጠቃሚ ከሆነ መግባት (Login)
+                    currentUser = user;
+                }
+            } else {
+                // ለሙከራ ብሮውዘር ላይ ሲከፈት (Guest Mode)
+                currentUser = { telegram_id: 12345678, username: 'guest_test', first_name: 'Guest', balance: 250.00 };
+            }
+
+            updateUI();
+            fetchTransactionsCount();
         }
 
-        // Display initial balance
-        updateBalanceDisplay();
+        // አፑ ሲከፈት ሎጊኑን ያስጀምራል
+        authenticateUser();
 
-        // Navigation Controller
+        // 4. UPDATE UI
+        function updateUI() {
+            if (!currentUser) return;
+            
+            document.querySelectorAll('.user-balance-txt').forEach(el => {
+                el.innerText = parseFloat(currentUser.balance).toFixed(2);
+            });
+
+            document.getElementById('profile-name').innerText = currentUser.username ? `@${currentUser.username}` : currentUser.first_name;
+            document.getElementById('user-initial').innerText = currentUser.first_name.charAt(0).toUpperCase();
+            document.getElementById('member-id').innerText = currentUser.telegram_id;
+        }
+
+        // 5. NAVIGATION CONTROLLER
         function switchView(viewId, element) {
             document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -378,19 +420,13 @@
             element.classList.add('active');
         }
 
-        function updateBalanceDisplay() {
-            document.querySelectorAll('.user-balance-txt').forEach(el => {
-                el.innerText = userBalance.toFixed(2);
-            });
-        }
-
-        // Game Actions
         function openCoinGame() {
             const box = document.getElementById('coin-game-box');
             box.style.display = box.style.display === 'none' ? 'block' : 'none';
         }
 
-        function playCoin(choice) {
+        // 6. REAL COIN FLIP GAME WITH SUPABASE
+        async function playCoin(choice) {
             const betInput = document.getElementById('bet-amount').value;
             const bet = parseFloat(betInput);
 
@@ -398,28 +434,69 @@
                 alert("እባክዎ ትክክለኛ የውርርድ መጠን ያስገቡ!");
                 return;
             }
-            if (bet > userBalance) {
-                alert("ይቅርታ፣ በቂ የሂሳብ ሚዛን የሎትም!");
+            if (bet > currentUser.balance) {
+                alert("ይቅርታ፣ በቂ የሂሳብ ሚዛን የሎትም! መጀመሪያ ዴፖዚት ያድርጉ።");
                 return;
             }
 
             const coinEl = document.getElementById('main-coin');
             coinEl.innerText = "⏳";
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 const sides = ['ሰው', 'አንበሳ'];
                 const result = sides[Math.floor(Math.random() * sides.length)];
                 coinEl.innerText = result;
 
+                let winAmount = 0;
+                let newBalance = currentUser.balance;
+
                 if (choice === result) {
-                    userBalance += bet;
-                    alert(`እንኳን ደስ አሎት! ${result} ወጥቷል። በላክኸው ምስል መሰረት እጥፍ አሸንፈዋል!`);
+                    winAmount = bet * 2;
+                    newBalance = currentUser.balance + bet; 
+                    alert(`እንኳን ደስ አሎት! ${result} ወጥቷል። እጥፍ አሸንፈዋል!`);
                 } else {
-                    userBalance -= bet;
+                    winAmount = 0;
+                    newBalance = currentUser.balance - bet; 
                     alert(`ያሳዝናል! ${result} ወጥቷል። ተሸንፈዋል።`);
                 }
-                updateBalanceDisplay();
+
+                // በዳታቤዝ ውስጥ የብር መጠኑን ማደስ
+                const { error: updateError } = await supabase
+                    .from('users')
+                    .update({ balance: newBalance })
+                    .eq('telegram_id', currentUser.telegram_id);
+
+                // የጌም ታሪክን በዳታቤዝ መመዝገብ
+                await supabase
+                    .from('games_history')
+                    .insert([{
+                        telegram_id: currentUser.telegram_id,
+                        bet_amount: bet,
+                        win_amount: winAmount,
+                        choice: choice,
+                        result: result
+                    }]);
+
+                if (!updateError) {
+                    currentUser.balance = newBalance;
+                    updateUI();
+                }
             }, 1000);
+        }
+
+        // 7. FETCH TX HISTORY
+        async function fetchTransactionsCount() {
+            if (!currentUser) return;
+            const { data, error } = await supabase
+                .from('transactions')
+                .select('status')
+                .eq('telegram_id', currentUser.telegram_id);
+
+            if (!error && data) {
+                document.getElementById('stat-total').innerText = data.length;
+                document.getElementById('stat-pending').innerText = data.filter(t => t.status === 'pending').length;
+                document.getElementById('stat-done').innerText = data.filter(t => t.status === 'done').length;
+            }
         }
     </script>
 </body>
