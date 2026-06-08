@@ -56,7 +56,7 @@
         }
         
         @keyframes spin {
-            0 { transform: rotate(0deg); }
+            0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
@@ -87,6 +87,636 @@
             margin-bottom: 5px;
         }
 
+        .auth-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .auth-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .auth-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .auth-input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .auth-link-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: -4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .auth-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* ----- MAIN CORE APP ----- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-bottom: 90px;
+            overflow-x: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(to bottom, #121722, var(--bg-color));
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .balance-badge {
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .view-content {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .view-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .game-item-card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .game-image-holder {
+            height: 110px;
+            background: linear-gradient(135deg, #1e2640, #111520);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .game-image-holder i { font-size: 36px; margin-bottom: 5px; }
+
+        .hot-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: var(--accent-red);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .game-info-box {
+            padding: 10px;
+            background: #171e2b;
+            text-align: center;
+        }
+
+        .game-info-box h4 { font-size: 13px; font-weight: 600; }
+        .game-info-box p { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+        .z-card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .coin-box { text-align: center; margin: 15px 0; }
+        .coin {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ffe066, #f5b041);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #333;
+            font-weight: bold;
+            border: 4px solid #fff;
+        }
+
+        .game-bet-input {
+            width: 100%;
+            padding: 12px;
+            background: #0b0e14;
+            border: 1px solid #2d3748;
+            color: #fff;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .btn-group { display: flex; gap: 10px; }
+
+        .z-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), #0088cc); color: #fff; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .btn-accent { background: linear-gradient(135deg, var(--accent-red), #cc1122); color: #fff; }
+        .btn-back { background: transparent; color: var(--accent-blue); font-size: 13px; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+
+        .card-label { color: var(--text-muted); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; }
+        .card-value { font-size: 26px; font-weight: 700; margin-bottom: 15px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 14px; }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 65px;
+            background-color: var(--nav-bg);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            gap: 4px;
+            flex: 1;
+            height: 100%;
+            justify-content: center;
+        }
+
+        .nav-item i { font-size: 18px; }
+        .nav-item.active { color: var(--accent-blue); }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <div class="splash-logo">Z-TIME</div>
+        <div class="splash-loader"></div>
+    </div>
+
+    <div id="auth-system" class="auth-container" style="display: none;">
+        <div class="auth-header">
+            <div class="auth-logo">Z-TIME</div>
+            <div class="auth-subtitle">Premium Gaming Arena</div>
+        </div>
+
+        <div id="box-login" class="auth-card">
+            <div class="auth-title">እንኳን ደህና መጡ</div>
+            <div class="input-group">
+                <i class="fa-solid fa-phone"></i>
+                <input type="number" id="login-phone" class="auth-input" placeholder="የስልክ ቁጥር">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="login-pass" class="auth-input" placeholder="የይለፍ ቃል (Password)">
+            </div>
+            <div class="auth-link-row">
+                <span class="auth-link" onclick="showAuthBox('forgot')">የይለፍ ቃል ረስተዋል?</span>
+            </div>
+            <button class="z-btn btn-primary" style="width: 100%; margin-bottom: 15px;" onclick="handleLogin()">ይግቡ (Login)</button>
+            <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
+                አካውንት የሎትም? <span class="auth-link" onclick="showAuthBox('register')">ይመዝገቡ</span>
+            </div>
+        </div>
+
+        <div id="box-register" class="auth-card" style="display: none;">
+            <div class="auth-title">አዲስ አካውንት መፍጠሪያ</div>
+            <div class="input-group">
+                <i class="fa-solid fa-phone"></i>
+                <input type="number" id="reg-phone" class="auth-input" placeholder="የስልክ ቁጥር">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="reg-pass" class="auth-input" placeholder="አዲስ የይለፍ ቃል">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-gift"></i>
+                <input type="text" id="reg-invite" class="auth-input" placeholder="የግብዣ ኮድ (አማራጭ)">
+            </div>
+            <button class="z-btn btn-accent" style="width: 100%; margin-bottom: 15px;" onclick="handleRegister()">ይመዝገቡ (Register)</button>
+            <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
+                አካውንት አለዎት? <span class="auth-link" onclick="showAuthBox('login')">ይግቡ</span>
+            </div>
+        </div>
+
+        <div id="box-forgot" class="auth-card" style="display: none;">
+            <div class="auth-title">የይለፍ ቃል ማደሻ</div>
+            <div class="input-group">
+                <i class="fa-solid fa-phone"></i>
+                <input type="number" id="forgot-phone" class="auth-input" placeholder="የስልክ ቁጥር">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="forgot-new-pass" class="auth-input" placeholder="አዲስ የይለፍ ቃል">
+            </div>
+            <button class="z-btn btn-primary" style="width: 100%; margin-bottom: 15px;" onclick="handleForgotPassword()">የይለፍ ቃል ቀይር</button>
+            <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
+                ወደ ኋላ ለመመለስ <span class="auth-link" onclick="showAuthBox('login')">እዚህ ይጫኑ</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app-content" style="opacity: 0; pointer-events: none; transition: opacity 0.4s;">
+        <div class="app-header">
+            <div class="brand-logo">Z-TIME</div>
+            <div class="top-status">
+                <div class="balance-badge"><i class="fa-solid fa-wallet"></i> <span class="user-balance-txt">0.00</span> ETB</div>
+            </div>
+        </div>
+
+        <div id="view-games" class="view-content active">
+            <div id="games-menu-section">
+                <h3 class="section-title">🎮 Top Games</h3>
+                <div class="games-grid">
+                    <div class="game-item-card" onclick="openGame('coinflip')">
+                        <div class="game-image-holder" style="background: linear-gradient(135deg, #b27a00, #4c3600);">
+                            <span class="hot-badge">Hot</span>
+                            <i class="fa-solid fa-circle-dollar-to-slot" style="color: #ffcc00;"></i>
+                        </div>
+                        <div class="game-info-box">
+                            <h4>Coin Flip</h4>
+                            <p>ሰው ወይስ አንበሳ</p>
+                        </div>
+                    </div>
+                    <div class="game-item-card" onclick="openGame('plinko')">
+                        <div class="game-image-holder" style="background: linear-gradient(135deg, #0f4c81, #051c33);">
+                            <span class="hot-badge">Hot</span>
+                            <i class="fa-solid fa-pyramid" style="color: #00d2ff;"></i>
+                        </div>
+                        <div class="game-info-box">
+                            <h4>Plinko 1000</h4>
+                            <p>ኳስ ጣል ያድርጉ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="game-arena-section" style="display: none;">
+                <div class="btn-back" onclick="backToMenu()"><i class="fa-solid fa-arrow-left"></i> ወደ ማውጫ ተመለስ</div>
+                <div class="z-card">
+                    <h3 style="text-align:center; margin-bottom:15px;" id="playing-game-title">Coin Flip</h3>
+                    <div class="coin-box">
+                        <div id="main-coin" class="coin">?</div>
+                        <input type="number" id="bet-amount" class="game-bet-input" placeholder="የውርርድ መጠን ያስገቡ (ETB)">
+                        <div class="btn-group">
+                            <button class="z-btn btn-primary" onclick="playCoin('ሰው')">ሰው</button>
+                            <button class="z-btn btn-secondary" onclick="playCoin('አንበሳ')">አንበሳ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-wallet" class="view-content">
+            <h2>Wallet</h2>
+            <div class="z-card" style="margin-top:15px;">
+                <p class="card-label">Main Balance</p>
+                <div class="card-value">ETB <span class="user-balance-txt">0.00</span></div>
+            </div>
+        </div>
+
+        <div id="view-profile" class="view-content">
+            <h2>Profile</h2>
+            <div class="z-card" style="display:flex; align-items:center; gap:15px; margin-top:15px;">
+                <div id="user-initial" style="width:50px; height:50px; background:linear-gradient(45deg, #ff3344, #00d2ff); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold;">U</div>
+                <div><h3 id="profile-name">User</h3><p style="font-size:11px; color:var(--accent-blue);">Active Player</p></div>
+            </div>
+            <div class="z-card">
+                <div class="detail-row"><span>Phone Number</span><span id="member-phone">-</span></div>
+                <div class="detail-row" style="border:none; cursor:pointer;" onclick="logout()">
+                    <span style="color:var(--accent-red); font-weight:600;"><i class="fa-solid fa-right-from-bracket"></i> Logout</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchView('view-games', this)"><i class="fa-solid fa-gamepad"></i>Games</div>
+            <div class="nav-item" onclick="switchView('view-wallet', this)"><i class="fa-solid fa-wallet"></i>Wallet</div>
+            <div class="nav-item" onclick="switchView('view-profile', this)"><i class="fa-solid fa-user"></i>Profile</div>
+        </div>
+    </div>
+
+    <script>
+        // የአንተ ትክክለኛ የፕሮጀክት ሊንክ እና አዲሱ ቁልፍ እዚህ ገብተዋል
+        const S_URL = "https://wjmlmtebrzeikhqevryr.supabase.co";
+        const S_KEY = "sb_publishable_5lagxwrv2-51pXYYcWv7ug_81CBMSHL";
+        
+        let _supabase;
+        let currentUser = null;
+
+        function initSupabase() {
+            try {
+                _supabase = window.supabase.createClient(S_URL, S_KEY, {
+                    auth: { persistSession: false }
+                });
+            } catch (e) {
+                console.error("Supabase Init Error: ", e);
+            }
+        }
+
+        function parseNetworkError(err, defaultMsg) {
+            if (!navigator.onLine || (err && (err.message === "Failed to fetch" || err.status === 0))) {
+                return "የኢንተርኔት ግንኙነት ችግር አጋጥሟል! እባክዎ ኮኔክሽንዎን ፈትሸው እንደገና ይሞክሩ።";
+            }
+            return err && err.message ? err.message : defaultMsg;
+        }
+
+        function showAuthBox(type) {
+            document.getElementById('box-login').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('box-register').style.display = type === 'register' ? 'block' : 'none';
+            document.getElementById('box-forgot').style.display = type === 'forgot' ? 'block' : 'none';
+        }
+
+        async function handleRegister() {
+            if (!_supabase) return alert("ዳታቤዝ አልተገናኘም!");
+
+            const rawPhone = document.getElementById('reg-phone').value.trim();
+            const password = document.getElementById('reg-pass').value.trim();
+            const inviteCode = document.getElementById('reg-invite').value.trim();
+
+            if (!rawPhone || !password) return alert("እባክዎ ስልክ ቁጥር እና ፓስወርድ ያስገቡ!");
+            const phoneInt = parseInt(rawPhone, 10);
+            if (isNaN(phoneInt)) return alert("እባክዎ ትክክለኛ ቁጥር ብቻ ያስገቡ!");
+
+            try {
+                // 1. መጀመሪያ ይህ ስልክ ቁጥር መኖሩን ማረጋገጥ
+                const { data: existing, error: cErr } = await _supabase
+                    .from('users')
+                    .select('telegram_id')
+                    .eq('telegram_id', phoneInt)
+                    .maybeSingle();
+
+                if (cErr) throw cErr;
+                if (existing) return alert("ይህ ስልክ ቁጥር አስቀድሞ ተመዝግቧል! እባክዎ Login ያድርጉ።");
+
+                // 2. አዲስ አካውንት መመዝገብ
+                const userObj = { 
+                    telegram_id: phoneInt, 
+                    username: inviteCode ? inviteCode.substring(0, 20) : 'NoInvite', 
+                    first_name: "User_" + rawPhone.substring(rawPhone.length - 4), 
+                    balance: 50.00 
+                };
+
+                const { data: newUser, error: iErr } = await _supabase
+                    .from('users')
+                    .insert([userObj])
+                    .select()
+                    .maybeSingle();
+
+                if (iErr) throw iErr;
+
+                currentUser = newUser || userObj;
+                alert("ምዝገባው ተሳክቷል! የ 50 ETB መመዝገቢያ ስጦታ አግኝተዋል።");
+                enterMainApp();
+            } catch (e) {
+                alert(parseNetworkError(e, "ለመመዝገብ አልተቻለም። ዳታቤዝ ላይ 'users' ቴብል መፈጠሩን ያረጋግጡ።"));
+            }
+        }
+
+        async function handleLogin() {
+            if (!_supabase) return alert("ሲስተሙ አልተጫነም!");
+
+            const rawPhone = document.getElementById('login-phone').value.trim();
+            const password = document.getElementById('login-pass').value.trim();
+
+            if (!rawPhone || !password) return alert("እባክዎ ስልክ እና ፓስወርድ ያስገቡ!");
+            const phoneInt = parseInt(rawPhone, 10);
+
+            try {
+                const { data: user, error } = await _supabase
+                    .from('users')
+                    .select('*')
+                    .eq('telegram_id', phoneInt)
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (user) {
+                    currentUser = user;
+                    enterMainApp();
+                } else {
+                    alert("ያልተመዘገበ ስልክ ቁጥር ነው! እባክዎ መጀመሪያ ይመዝገቡ።");
+                }
+            } catch(e) {
+                alert(parseNetworkError(e, "መግባት አልተቻለም።"));
+            }
+        }
+
+        async function handleForgotPassword() {
+            alert("ይህ አገልግሎት በቅርቡ ይለቀቃል!");
+            showAuthBox('login');
+        }
+
+        function enterMainApp() {
+            document.getElementById('auth-system').style.display = 'none';
+            const mainApp = document.getElementById('main-app-content');
+            mainApp.style.opacity = '1';
+            mainApp.style.pointerEvents = 'auto';
+            renderUI();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('main-app-content').style.opacity = '0';
+            document.getElementById('auth-system').style.display = 'flex';
+            showAuthBox('login');
+        }
+
+        function renderUI() {
+            if (!currentUser) return;
+            document.querySelectorAll('.user-balance-txt').forEach(el => el.innerText = parseFloat(currentUser.balance).toFixed(2));
+            document.getElementById('profile-name').innerText = currentUser.first_name || "User";
+            document.getElementById('user-initial').innerText = currentUser.first_name ? currentUser.first_name[0].toUpperCase() : "U";
+            document.getElementById('member-phone').innerText = currentUser.telegram_id;
+        }
+
+        function switchView(viewId, el) {
+            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            el.classList.add('active');
+            if(viewId === 'view-games') backToMenu();
+        }
+
+        function openGame(gameType) {
+            if(gameType === 'coinflip') {
+                document.getElementById('games-menu-section').style.display = 'none';
+                document.getElementById('game-arena-section').style.display = 'block';
+            } else {
+                alert(gameType.toUpperCase() + " ጌም በቅርቡ ይለቀቃል!");
+            }
+        }
+
+        function backToMenu() {
+            document.getElementById('game-arena-section').style.display = 'none';
+            document.getElementById('games-menu-section').style.display = 'block';
+        }
+
+        async function playCoin(choice) {
+            const betAmount = parseFloat(document.getElementById('bet-amount').value);
+            if (!betAmount || betAmount <= 0) return alert("እባክዎ የውርርድ መጠን ያስገቡ!");
+            if (betAmount > currentUser.balance) return alert("በቂ ሂሳብ የሎትም!");
+
+            const coin = document.getElementById('main-coin');
+            coin.innerText = "⏳";
+
+            setTimeout(async () => {
+                const sides = ['ሰው', 'አንበሳ'];
+                const result = sides[Math.floor(Math.random() * 2)];
+                coin.innerText = result;
+
+                let newBal = currentUser.balance;
+                if (choice === result) {
+                    newBal += betAmount;
+                    alert(`አሸነፉ! 🎉 ውጤቱ ${result} ነው።`);
+                } else {
+                    newBal -= betAmount;
+                    alert(`ተሸነፉ! 😢 ውጤቱ ${result} ነው።`);
+                }
+
+                currentUser.balance = newBal;
+                renderUI();
+
+                if(_supabase) {
+                    try {
+                        await _supabase.from('users').update({ balance: newBal }).eq('telegram_id', currentUser.telegram_id);
+                    } catch(err) {
+                        console.error("Balance background update error", err);
+                    }
+                }
+            }, 1000);
+        }
+
+        window.onload = () => {
+            initSupabase();
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.expand();
+            }
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.visibility = 'hidden';
+                    document.getElementById('auth-system').style.display = 'flex';
+                }, 500);
+            }, 1500);
+        };
+    </script>
+</body>
+</html>
         .auth-subtitle {
             font-size: 14px;
             color: var(--text-muted);
