@@ -203,15 +203,19 @@
         }
 
         .z-btn {
-            padding: 12px;
+            padding: 14px;
             border-radius: 10px;
             border: none;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            font-size: 14px;
+            font-size: 15px;
             text-align: center;
-            display: block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
         }
 
         .btn-primary { background: linear-gradient(135deg, var(--accent-blue), #0088cc); color: #fff; }
@@ -220,28 +224,62 @@
         .btn-success { background: linear-gradient(135deg, var(--accent-green), #00aa50); color: #fff; }
         .btn-back { background: transparent; color: var(--accent-blue); cursor: pointer; margin-bottom: 15px; display: inline-block; }
 
-        /* KENO BOARD */
+        /* SPIN WHEEL ANIMATION */
+        .wheel-container {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 5px solid var(--accent-blue);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #111622;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .wheel-element {
+            font-size: 38px;
+            transition: transform 1.5s cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        /* KENO BOARD 20 MAP */
         .keno-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            gap: 10px;
             margin: 15px 0;
         }
 
         .keno-num {
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            padding: 12px;
+            padding: 14px 0;
             text-align: center;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .keno-num.selected { background: var(--accent-blue); color: #000; }
+        .keno-num.selected { background: var(--accent-blue); color: #000; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
         .keno-num.drawn { background: var(--accent-gold); color: #000; }
-        .keno-num.hit { background: var(--accent-green); color: #fff; }
+        .keno-num.hit { background: var(--accent-green); color: #fff; box-shadow: 0 0 10px rgba(0, 230, 118, 0.6); }
+
+        .avatar-box {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 10px;
+            border: 2px solid #fff;
+        }
 
         /* BOTTOM NAVIGATION */
         .bottom-nav {
@@ -268,38 +306,44 @@
 
         .nav-item i { font-size: 18px; margin-bottom: 3px; }
         .nav-item.active { color: var(--accent-blue); }
+
+        /* DEPOSIT INFO BOX STYLE */
+        .deposit-info-card {
+            background: linear-gradient(135deg, #1e2736, #151a24);
+            border-left: 4px solid var(--accent-gold);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
 
-    <!-- AUTHENTICATION SYSTEM -->
     <div id="auth-system" class="auth-container">
         <div class="auth-header">
             <div class="auth-logo">Z-TIME</div>
             <p style="color:var(--text-muted)">Premium Mega Gaming Arena</p>
         </div>
 
-        <!-- LOGIN -->
         <div id="box-login" class="auth-card">
             <div class="auth-title">መግቢያ (Login)</div>
             <div class="input-group"><i class="fa-solid fa-phone"></i><input type="number" id="login-phone" class="auth-input" placeholder="የስልክ ቁጥር"></div>
             <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="login-pass" class="auth-input" placeholder="የይለፍ ቃል (Password)"></div>
             <div class="auth-link-row"><span class="auth-link" onclick="showAuthBox('forgot')">የይለፍ ቃል ረስተዋል?</span></div>
-            <button class="z-btn btn-primary" onclick="handleLogin()">ይግቡ</button>
+            <button class="z-btn btn-primary" onclick="handleLogin()"><i class="fa-solid fa-right-to-bracket"></i> ይግቡ</button>
             <p style="text-align:center; margin-top:15px; font-size:13px; color:var(--text-muted)">አካውንት የሎትም? <span class="auth-link" onclick="showAuthBox('register')">ይመዝገቡ</span></p>
         </div>
 
-        <!-- REGISTER -->
         <div id="box-register" class="auth-card" style="display: none;">
             <div class="auth-title">ምዝገባ (Register)</div>
             <div class="input-group"><i class="fa-solid fa-phone"></i><input type="number" id="reg-phone" class="auth-input" placeholder="የስልክ ቁጥር"></div>
             <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="reg-pass" class="auth-input" placeholder="አዲስ የይለፍ ቃል"></div>
             <div class="input-group"><i class="fa-solid fa-gift"></i><input type="text" id="reg-invite" class="auth-input" placeholder="የግብዣ ኮድ (ካለዎት)"></div>
-            <button class="z-btn btn-success" onclick="handleRegister()">ይመዝገቡ</button>
+            <button class="z-btn btn-success" onclick="handleRegister()"><i class="fa-solid fa-user-plus"></i> ይመዝገቡ</button>
             <p style="text-align:center; margin-top:15px; font-size:13px; color:var(--text-muted)">አካውንት አለዎት? <span class="auth-link" onclick="showAuthBox('login')">ይግቡ</span></p>
         </div>
 
-        <!-- FORGOT PASSWORD -->
         <div id="box-forgot" class="auth-card" style="display: none;">
             <div class="auth-title">የይለፍ ቃል ማደሻ</div>
             <div class="input-group"><i class="fa-solid fa-phone"></i><input type="number" id="forgot-phone" class="auth-input" placeholder="የተመዘገበበት ስልክ ቁጥር"></div>
@@ -309,14 +353,12 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div id="main-app-content" style="opacity:0; pointer-events:none;">
         <div class="app-header">
             <div class="brand-logo">Z-TIME</div>
             <div class="balance-badge"><i class="fa-solid fa-wallet"></i> <span class="user-balance-txt">0.00</span> ETB</div>
         </div>
 
-        <!-- GAMES VIEW -->
         <div id="view-games" class="view-content active">
             <div id="games-menu">
                 <h3 class="section-title">🎮 ጨዋታዎችን ይምረጡ</h3>
@@ -327,7 +369,7 @@
                     </div>
                     <div class="game-item-card" onclick="openGame('coinround')">
                         <div class="game-image-holder" style="background:linear-gradient(135deg, #8e44ad, #2c3e50)"><i class="fa-solid fa-rotate" style="color:#a55eea"></i></div>
-                        <div class="game-info-box"><h4>Coin Round</h4><p>መልቲፕላየር ማባዣ</p></div>
+                        <div class="game-info-box"><h4>Coin Round</h4><p>የመልቲፕላየር ዊል</p></div>
                     </div>
                     <div class="game-item-card" onclick="openGame('keno')">
                         <div class="game-image-holder" style="background:linear-gradient(135deg, #27ae60, #2c3e50)"><i class="fa-solid fa-table-cells" style="color:#2ecc71"></i></div>
@@ -336,12 +378,11 @@
                 </div>
             </div>
 
-            <!-- COIN FLIP ARENA -->
             <div id="arena-coinflip" style="display:none;">
                 <div class="btn-back" onclick="backToMenu()"><i class="fa-solid fa-arrow-left"></i> ተመለስ</div>
                 <div class="z-card" style="text-align:center;">
                     <div id="coin-box" style="width:80px; height:80px; background:#ffcc00; color:#000; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; margin:0 auto 20px;">?</div>
-                    <input type="number" id="coin-bet" class="auth-input" placeholder="የውርርድ መጠን (ETB)" style="text-align:center; margin-bottom:15px;">
+                    <input type="number" id="coin-bet" class="auth-input" placeholder="የውርርድ መጠን (ETB)" style="text-align:center; margin-bottom:15px; padding-left:15px;">
                     <div style="display:flex; gap:10px;">
                         <button class="z-btn btn-primary" onclick="playCoinFlip('ሰው')">ሰው</button>
                         <button class="z-btn btn-accent" onclick="playCoinFlip('አንበሳ')">አንበሳ</button>
@@ -349,71 +390,84 @@
                 </div>
             </div>
 
-            <!-- COIN ROUND ARENA -->
             <div id="arena-coinround" style="display:none;">
                 <div class="btn-back" onclick="backToMenu()"><i class="fa-solid fa-arrow-left"></i> ተመለስ</div>
                 <div class="z-card" style="text-align:center;">
-                    <div id="round-wheel" style="font-size:20px; color:var(--accent-blue); margin-bottom:20px; font-weight:700;">ዝግጁ</div>
-                    <input type="number" id="round-bet" class="auth-input" placeholder="የውርርድ መጠን (ETB)" style="text-align:center; margin-bottom:15px;">
-                    <button class="z-btn btn-success" onclick="playCoinRound()">ማሽከርከሪያውን አስጀምር</button>
+                    <div class="wheel-container">
+                        <div id="round-wheel-element" class="wheel-element">🎡</div>
+                    </div>
+                    <div id="round-wheel-text" style="font-size:18px; color:var(--accent-blue); margin-bottom:20px; font-weight:700;">ዝግጁ (Spin)</div>
+                    <input type="number" id="round-bet" class="auth-input" placeholder="የውርርድ መጠን (ETB)" style="text-align:center; margin-bottom:15px; padding-left:15px;">
+                    <button class="z-btn btn-success" onclick="playCoinRound()"><i class="fa-solid fa-spinner"></i> ማሽከርከሪያውን አስጀምር</button>
                 </div>
             </div>
 
-            <!-- KENO ARENA -->
             <div id="arena-keno" style="display:none;">
                 <div class="btn-back" onclick="backToMenu()"><i class="fa-solid fa-arrow-left"></i> ተመለስ</div>
-                <div class="z-card">
-                    <p style="text-align:center; font-size:13px; color:var(--text-muted); margin-bottom:10px;">ከ 1 እስከ 20 ባሉት ውስጥ 3 ቁጥሮችን ይምረጡ</p>
+                <div class="z-card" style="text-align:center;">
+                    <div class="avatar-box">🎰</div>
+                    <h4 style="color:var(--accent-blue); margin-bottom:5px;">Z-KENO CLASSIC</h4>
+                    <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">ከ 1 እስከ 20 ባለው ሰሌዳ ላይ 3 እድለኛ ቁጥሮችን ይምረጡ</p>
+                    
                     <div class="keno-grid" id="keno-board"></div>
-                    <input type="number" id="keno-bet" class="auth-input" placeholder="የውርርድ መጠን (ETB)" style="text-align:center; margin-bottom:15px;">
-                    <button class="z-btn btn-primary" onclick="playKeno()">ቁጥሮችን አውጣ</button>
+                    
+                    <input type="number" id="keno-bet" class="auth-input" placeholder="የውርርድ መጠን (ETB)" style="text-align:center; margin-bottom:15px; padding-left:15px;">
+                    <button class="z-btn btn-primary" onclick="playKeno()"><i class="fa-solid fa-dice"></i> ቁጥሮችን አውጣ</button>
                 </div>
             </div>
         </div>
 
-        <!-- WALLET VIEW -->
         <div id="view-wallet" class="view-content">
             <h3 class="section-title">💰 የገንዘብ ቦርሳ (Wallet)</h3>
-            <div class="z-card">
-                <p style="color:var(--text-muted); font-size:12px;">ጠቅላላ የሂሳብ ሚዛን</p>
-                <h2 style="color:var(--accent-blue); font-size:32px; margin-bottom:10px;"><span class="user-balance-txt">0.00</span> ETB</h2>
+            <div class="z-card" style="background: linear-gradient(135deg, #151a24, #1c2331); border: 1px solid rgba(0, 210, 255, 0.2);">
+                <p style="color:var(--text-muted); font-size:13px;"><i class="fa-solid fa-shield-halved"></i> ጠቅላላ የሂሳብ ሚዛን</p>
+                <h2 style="color:var(--accent-blue); font-size:34px; margin-top:5px; font-weight:700;"><span class="user-balance-txt">0.00</span> <span style="font-size:18px; color:#fff;">ETB</span></h2>
             </div>
             
-            <div class="z-card">
-                <h4 style="margin-bottom:10px;">ገንዘብ ማስገቢያ (Deposit)</h4>
-                <input type="number" id="dep-amount" class="auth-input" placeholder="የሚያስገቡት መጠን (ETB)" style="margin-bottom:10px;">
-                <button class="z-btn btn-success" onclick="handleDeposit()">በቴሌብር ያስገቡ</button>
+            <div class="z-card" style="border-top: 3px solid var(--accent-green);">
+                <h4 style="margin-bottom:12px; color:var(--accent-green); display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-money-bill-wave"></i> ገንዘብ ማስገቢያ (Deposit)</h4>
+                
+                <div class="deposit-info-card">
+                    <p style="font-size:12px; color:var(--text-muted);">የቴሌብር አካውንት (Telebirr Number)፡</p>
+                    <h3 style="color:var(--accent-gold); font-size:18px; margin:4px 0 2px;">0954406366</h3>
+                    <p style="font-size:14px; color:#fff; font-weight:500;">ስም (Name)፡ Temesgen Ayenew</p>
+                    <p style="font-size:11px; color:var(--accent-blue); margin-top:8px;"><i class="fa-solid fa-circle-info"></i> መመሪያ፡ በዚህ ቁጥር ላይ በቴሌብር ካስገቡ በኋላ የተላከበትን መጠን ከታች አስገብተው ያረጋግጡ።</p>
+                </div>
+
+                <input type="number" id="dep-amount" class="auth-input" placeholder="ያሰገቡትን መጠን እዚህ ይፃፉ (ETB)" style="margin-bottom:12px; padding-left:15px;">
+                <button class="z-btn btn-success" onclick="handleDeposit()"><i class="fa-solid fa-paper-plane"></i> በቴሌብር ያስገቡ</button>
             </div>
 
-            <div class="z-card">
-                <h4 style="margin-bottom:10px;">ገንዘብ ማውጫ (Withdraw)</h4>
-                <input type="number" id="wit-amount" class="auth-input" placeholder="የሚያወጡት መጠን (ETB)" style="margin-bottom:10px;">
-                <button class="z-btn btn-danger" onclick="handleWithdraw()">ወደ ቴሌብር ያውጡ</button>
+            <div class="z-card" style="border-top: 3px solid var(--accent-red);">
+                <h4 style="margin-bottom:12px; color:var(--accent-red); display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-building-columns"></i> ገንዘብ ማውጫ (Withdraw)</h4>
+                <input type="number" id="wit-amount" class="auth-input" placeholder="የሚያወጡት መጠን (ETB)" style="margin-bottom:12px; padding-left:15px;">
+                <button class="z-btn btn-danger" onclick="handleWithdraw()"><i class="fa-solid fa-wallet"></i> ወዲያውኑ ወደ ቴሌብር ያውጡ</button>
             </div>
         </div>
 
-        <!-- INVITE VIEW -->
         <div id="view-invite" class="view-content">
             <h3 class="section-title">🎁 ሰዎችን ጋብዘው ይርብሹ</h3>
-            <div class="z-card" style="text-align:center;">
-                <p style="color:var(--text-muted); margin-bottom:10px;">የእርስዎ ልዩ የግብዣ ኮድ</p>
-                <h2 id="my-invite-code" style="letter-spacing:3px; color:var(--accent-gold); margin-bottom:15px;">-</h2>
-                <button class="z-btn btn-accent" onclick="copyInviteCode()"><i class="fa-solid fa-copy"></i> ኮዱን ኮፒ አድርግ</button>
-                <p style="font-size:12px; margin-top:15px; color:var(--text-muted)">እያንዳንዱ ሰው የእርስዎን ኮድ ተጠቅሞ ሲመዘገብ የ 10 ETB የነፃ ስጦታ ያገኛሉ።</p>
+            <div class="z-card" style="text-align:center; border: 1px solid rgba(255, 204, 0, 0.2);">
+                <div style="font-size:45px; margin-bottom:10px;">🎉</div>
+                <p style="color:var(--text-muted); margin-bottom:5px;">የእርስዎ ልዩ የግብዣ ኮድ</p>
+                <h2 id="my-invite-code" style="letter-spacing:4px; color:var(--accent-gold); font-size:28px; margin-bottom:15px; font-weight:700;">-</h2>
+                
+                <button class="z-btn btn-accent" onclick="copyInviteCode()" style="width:90%; font-weight:700; box-shadow: 0 4px 12px rgba(255, 204, 0, 0.2);"><i class="fa-solid fa-copy"></i> ኮዱን ኮፒ አድርግ</button>
+                
+                <p style="font-size:12px; margin-top:20px; color:var(--text-muted); line-height:1.6;">እያንዳንዱ ሰው የእርስዎን የግብዣ ኮድ ተጠቅሞ ሲመዘገብ የ <span style="color:var(--accent-green); font-weight:600;">10 ETB</span> የነፃ ስጦታ በዋሌትዎ ላይ ወዲያውኑ ያገኛሉ።</p>
             </div>
         </div>
 
-        <!-- PROFILE VIEW -->
         <div id="view-profile" class="view-content">
             <h3 class="section-title">👤 የእኔ አካውንት</h3>
-            <div class="z-card">
+            <div class="z-card" style="text-align:center;">
+                <div style="font-size:50px; margin-bottom:10px;">👤</div>
                 <h3 id="prof-phone">-</h3>
-                <p style="color:var(--accent-blue); margin-top: 5px;">Z-Time VIP ተጫዋች</p>
+                <p style="color:var(--accent-blue); margin-top: 5px; font-size:14px; font-weight:500;">Z-Time VIP Premium Player</p>
             </div>
-            <button class="z-btn btn-danger" onclick="logout()">ከአካውንት ውጣ (Logout)</button>
+            <button class="z-btn btn-danger" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ከእነ አካውንት ውጣ (Logout)</button>
         </div>
 
-        <!-- BOTTOM NAV -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="switchView('view-games', this)"><i class="fa-solid fa-gamepad"></i>ጌሞች</div>
             <div class="nav-item" onclick="switchView('view-wallet', this)"><i class="fa-solid fa-wallet"></i>ዋሌት</div>
@@ -444,16 +498,19 @@
             document.getElementById('box-forgot').style.display = type === 'forgot' ? 'block' : 'none';
         }
 
-        // LOGIN WORKING 100%
         async function handleLogin() {
             const phone = document.getElementById('login-phone').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
             if(!phone || !pass) return alert("እባክዎ ሁሉንም ቦታዎች ይሙሉ!");
 
             try {
-                const { data: user, error } = await _supabase.from('users').select('*').eq('telegram_id', parseInt(phone, 10)).maybeSingle();
-                if (error) throw error;
+                let { data: user, error } = await _supabase.from('users').select('*').eq('telegram_id', phone).maybeSingle();
                 
+                if(!user) {
+                    let { data: userAlt } = await _supabase.from('users').select('*').eq('telegram_id', parseInt(phone, 10)).maybeSingle();
+                    user = userAlt;
+                }
+
                 if(user && user.password === pass) {
                     currentUser = user;
                     enterApp();
@@ -461,22 +518,20 @@
                     alert("የስልክ ቁጥር ወይም የይለፍ ቃል አልተዛመደም!");
                 }
             } catch(e) { 
-                alert("መግባት አልተቻለም። ኢንተርኔትዎን ፈትሸው እንደገና ይሞክሩ።"); 
+                alert("የዳታቤዝ ግንኙነት ችግር! እባክዎ የኢንተርኔት ግንኙነትዎን ፈትሸው እንደገና ይግቡ።"); 
             }
         }
 
-        // REGISTER WORKING 100%
         async function handleRegister() {
             const phone = document.getElementById('reg-phone').value.trim();
             const pass = document.getElementById('reg-pass').value.trim();
             const invite = document.getElementById('reg-invite').value.trim();
             if(!phone || !pass) return alert("እባክዎ ስልክ እና ፓስወርድ ያስገቡ!");
 
-            const pInt = parseInt(phone, 10);
             const myCode = "Z" + phone.substring(phone.length - 4);
 
             try {
-                const { data: exist } = await _supabase.from('users').select('id').eq('telegram_id', pInt).maybeSingle();
+                const { data: exist } = await _supabase.from('users').select('id').eq('telegram_id', phone).maybeSingle();
                 if(exist) return alert("ይህ ስልክ ቁጥር አስቀድሞ ተመዝግቧል!");
 
                 let initialBalance = 50.00;
@@ -490,41 +545,38 @@
                     }
                 }
 
-                const newUserObj = { telegram_id: pInt, password: pass, balance: initialBalance, invite_code: myCode, username: 'Player', first_name: 'User' };
+                const newUserObj = { telegram_id: phone, password: pass, balance: initialBalance, invite_code: myCode, username: 'Player', first_name: 'User' };
                 const { data: created, error } = await _supabase.from('users').insert([newUserObj]).select().maybeSingle();
-                if (error) throw error;
-
+                
                 currentUser = created || newUserObj;
 
                 if(inviterUser) {
                     await _supabase.from('users').update({ balance: inviterUser.balance + 10.00 }).eq('id', inviterUser.id);
-                    await _supabase.from('referrals').insert([{ referrer_id: inviterUser.telegram_id, referred_id: pInt, bonus_given: 10.00 }]);
+                    try {
+                        await _supabase.from('referrals').insert([{ referrer_id: inviterUser.telegram_id, referred_id: phone, bonus_given: 10.00 }]);
+                    } catch(ex){}
                 }
 
                 alert(`ምዝገባው ተሳክቷል! የ ${initialBalance} ETB ቦነስ አግኝተዋል።`);
                 enterApp();
             } catch(e) { 
-                alert("የምዝገባ ስህተት! እባክዎ በድጋሚ ይሞክሩ።"); 
+                alert("የምዝገባ ስህተት አጋጥሟል! እባክዎ ኢንተርኔትዎን አብርተው እንደገና ይሞክሩ።"); 
             }
         }
 
-        // FORGOT PASSWORD WORKING 100%
         async function handleForgotPassword() {
             const phone = document.getElementById('forgot-phone').value.trim();
             const newPass = document.getElementById('forgot-new-pass').value.trim();
             if(!phone || !newPass) return alert("እባክዎ ሁሉንም ቦታዎች ይሙሉ!");
 
             try {
-                const { data: exist } = await _supabase.from('users').select('id').eq('telegram_id', parseInt(phone, 10)).maybeSingle();
-                if(!exist) return alert("ይህ ስልክ ቁጥር ዳታቤዝ ላይ አልተገኘም!");
-
-                const { error } = await _supabase.from('users').update({ password: newPass }).eq('telegram_id', parseInt(phone, 10));
+                const { error } = await _supabase.from('users').update({ password: newPass }).eq('telegram_id', phone);
                 if(error) throw error;
 
                 alert("የይለፍ ቃልዎ በትክክል ተቀይሯል! አዲሱን ፓስወርድ ተጠቅመው ይግቡ።");
                 showAuthBox('login');
             } catch(e) { 
-                alert("የይለፍ ቃል መቀየር አልተቻለም!"); 
+                alert("የይለፍ ቃል መቀየር አልተቻለም! እባክዎ ኢንተርኔትዎን ይፈትሹ።"); 
             }
         }
 
@@ -544,9 +596,12 @@
 
         function updateUI() {
             if(!currentUser) return;
-            document.querySelectorAll('.user-balance-txt').forEach(e => e.innerText = parseFloat(currentUser.balance).toFixed(2));
+            const currentBal = currentUser.balance !== undefined ? currentUser.balance : 0.00;
+            const currentCode = currentUser.invite_code ? currentUser.invite_code : ("Z" + String(currentUser.telegram_id).substring(String(currentUser.telegram_id).length - 4));
+
+            document.querySelectorAll('.user-balance-txt').forEach(e => e.innerText = parseFloat(currentBal).toFixed(2));
             document.getElementById('prof-phone').innerText = "+251 " + currentUser.telegram_id;
-            document.getElementById('my-invite-code').innerText = currentUser.invite_code || "Z-NONE";
+            document.getElementById('my-invite-code').innerText = currentCode;
         }
 
         function switchView(vId, el) {
@@ -588,17 +643,25 @@
                     currentUser.balance -= bet; alert(`ተሸነፉ! 😢 ውጤቱ: ${res}`);
                 }
                 updateUI();
-                await _supabase.from('users').update({ balance: currentUser.balance }).eq('id', currentUser.id);
+                try {
+                    await _supabase.from('users').update({ balance: currentUser.balance }).eq('telegram_id', currentUser.telegram_id);
+                } catch(e){}
             }, 800);
         }
 
-        // GAME 2: COIN ROUND
+        // GAME 2: COIN ROUND SPIN WITH ANIMATION
         async function playCoinRound() {
             const bet = parseFloat(document.getElementById('round-bet').value);
             if(!bet || bet <= 0 || bet > currentUser.balance) return alert("ትክክለኛ ውርርድ ያስገቡ!");
 
-            const txt = document.getElementById('round-wheel');
+            const el = document.getElementById('round-wheel-element');
+            const txt = document.getElementById('round-wheel-text');
+            
             txt.innerText = "🌀 እየተሽከረከረ ነው...";
+            
+            // Random spin animation degrees
+            const randDeg = Math.floor(Math.random() * 360) + 1440; 
+            el.style.transform = `rotate(${randDeg}deg)`;
 
             setTimeout(async () => {
                 const mults = [0, 0.5, 1.2, 2, 5];
@@ -607,15 +670,20 @@
                 currentUser.balance += diff;
 
                 txt.innerText = `${winM}x ወጣ!`;
+                // Reset rotation cleanly for next turn
+                el.style.transform = 'rotate(0deg)';
+
                 if(winM >= 1.2) alert(`አሸነፉ! 🎉 ${winM}x ማባዣ አግኝተዋል።`);
                 else alert(`ተሸነፉ! 😢 ማባዣው ${winM}x ነው።`);
 
                 updateUI();
-                await _supabase.from('users').update({ balance: currentUser.balance }).eq('id', currentUser.id);
-            }, 1000);
+                try {
+                    await _supabase.from('users').update({ balance: currentUser.balance }).eq('telegram_id', currentUser.telegram_id);
+                } catch(e){}
+            }, 1500);
         }
 
-        // GAME 3: KENO BOARD BUILDER
+        // GAME 3: KENO BOARD BUILDER 20 MAP
         function buildKenoBoard() {
             const board = document.getElementById('keno-board');
             if(!board) return;
@@ -624,7 +692,7 @@
                 const n = document.createElement('div');
                 n.className = "keno-num";
                 n.id = "k-num-" + i;
-                n.innerText = i;
+                n.innerText = i < 10 ? "0" + i : i;
                 n.onclick = () => {
                     if(n.classList.contains('selected')) {
                         n.classList.remove('selected');
@@ -644,10 +712,7 @@
             if(selectedKenoNums.length !== 3) return alert("እባክዎ መጀመሪያ 3 ቁጥሮች ይምረጡ!");
             if(!bet || bet <= 0 || bet > currentUser.balance) return alert("ትክክለኛ ውርርድ ያስገቡ!");
 
-            // ሰሌዳውን ማፅዳት
-            document.querySelectorAll('.keno-num').forEach(el => {
-                el.classList.remove('drawn', 'hit');
-            });
+            document.querySelectorAll('.keno-num').forEach(el => { el.classList.remove('drawn', 'hit'); });
 
             let drawn = [];
             while(drawn.length < 5) {
@@ -658,11 +723,8 @@
             drawn.forEach(num => {
                 const cell = document.getElementById("k-num-" + num);
                 if(cell) {
-                    if(cell.classList.contains('selected')) {
-                        cell.classList.add('hit');
-                    } else {
-                        cell.classList.add('drawn');
-                    }
+                    if(cell.classList.contains('selected')) { cell.classList.add('hit'); } 
+                    else { cell.classList.add('drawn'); }
                 }
             });
 
@@ -677,16 +739,16 @@
 
             setTimeout(async () => {
                 alert(`የወጡት ቁጥሮች፡ ${drawn.join(', ')} \nያገኟቸው ቁጥሮች፡ ${hits} \nማባዣ፡ ${pMultiplier}x!`);
-                
                 document.querySelectorAll('.keno-num').forEach(el => el.classList.remove('selected', 'drawn', 'hit'));
                 selectedKenoNums = [];
-                
                 updateUI();
-                await _supabase.from('users').update({ balance: currentUser.balance }).eq('id', currentUser.id);
+                try {
+                    await _supabase.from('users').update({ balance: currentUser.balance }).eq('telegram_id', currentUser.telegram_id);
+                } catch(e){}
             }, 400);
         }
 
-        // DEPOSIT
+        // TRANSACTION ACTIONS
         async function handleDeposit() {
             const amt = parseFloat(document.getElementById('dep-amount').value);
             if(!amt || amt < 10) return alert("ቢያንስ 10 ብር ማስገባት አለብዎት!");
@@ -695,13 +757,12 @@
                 await _supabase.from('transactions').insert([{ telegram_id: currentUser.telegram_id, type: 'deposit', amount: amt, status: 'completed' }]);
                 currentUser.balance += amt;
                 updateUI();
-                await _supabase.from('users').update({ balance: currentUser.balance }).eq('id', currentUser.id);
+                await _supabase.from('users').update({ balance: currentUser.balance }).eq('telegram_id', currentUser.telegram_id);
                 alert(`የ ${amt} ETB የገንዘብ ማስገቢያ ጥያቄ በቴሌብር ተሳክቷል!`);
                 document.getElementById('dep-amount').value = "";
-            } catch(e) { alert("ማስገባት አልተቻለም"); }
+            } catch(e) { alert("ማስገባት አልተቻለም። የኔትወርክ ችግር አለ።"); }
         }
 
-        // WITHDRAW
         async function handleWithdraw() {
             const amt = parseFloat(document.getElementById('wit-amount').value);
             if(!amt || amt <= 0) return alert("ትክክለኛ መጠን ያስገቡ!");
@@ -711,16 +772,16 @@
                 await _supabase.from('transactions').insert([{ telegram_id: currentUser.telegram_id, type: 'withdraw', amount: amt, status: 'pending' }]);
                 currentUser.balance -= amt;
                 updateUI();
-                await _supabase.from('users').update({ balance: currentUser.balance }).eq('id', currentUser.id);
-                alert(`የ ${amt} ETB የገንዘብ ማውጫ ጥያቄዎ ለኮንፊርሜሽን ቀርቧል! በ 30 ደቂቃ ውስጥ ወደ ስልክዎ ይላካል።`);
+                await _supabase.from('users').update({ balance: currentUser.balance }).eq('telegram_id', currentUser.telegram_id);
+                alert(`የ ${amt} ETB የገንዘብ ማውጫ ጥያቄዎ ቀርቧል! በ 30 ደቂቃ ውስጥ ወደ ቴሌብርዎ ይላካል።`);
                 document.getElementById('wit-amount').value = "";
             } catch(e) { alert("ማውጣት አልተቻለም"); }
         }
 
         function copyInviteCode() {
-            if(!currentUser || !currentUser.invite_code) return;
-            navigator.clipboard.writeText(currentUser.invite_code);
-            alert("የግብዣ ኮድዎ ኮፒ ተደርጓል! ለጓደኞችዎ ይላኩ።");
+            const currentCode = currentUser.invite_code ? currentUser.invite_code : ("Z" + String(currentUser.telegram_id).substring(String(currentUser.telegram_id).length - 4));
+            navigator.clipboard.writeText(currentCode);
+            alert("የግብዣ ኮድዎ ኮፒ ተደርጓል!");
         }
 
         window.onload = () => {
