@@ -606,83 +606,114 @@
             document.getElementById('box-forgot').style.display = type === 'forgot' ? 'block' : 'none';
         }
 
-        // --- AUTH ACTION LOGICS ---
+        // --- AUTH ACTION LOGICS (STABLE VERSION) ---
         
         // 1. REGISTER
         async function handleRegister() {
-            const phone = document.getElementById('reg-phone').value.trim();
+            const rawPhone = document.getElementById('reg-phone').value.trim();
             const password = document.getElementById('reg-pass').value.trim();
             const inviteCode = document.getElementById('reg-invite').value.trim();
 
-            if (!phone || !password) return alert("እባክዎ ስልክ ቁጥር እና ፓስወርድ ያስገቡ!");
+            if (!rawPhone || !password) return alert("እባክዎ ስልክ ቁጥር እና ፓስወርድ ያስገቡ!");
             
-            // በቅድሚያ ይሄ ስልክ ቁጥር መኖሩን ማረጋገጥ
-            const { data: existingUser } = await _supabase
-                .from('users')
-                .select('*')
-                .eq('telegram_id', phone) // እዚህ ላይ ለጊዜው telegram_id ን እንደ ስልክ መለያ እንጠቀማለን
-                .maybeSingle();
+            // የ Supabaseን የቁጥር ገደብ (BigInt) ለማርካት ስልኩን ወደ ንጹህ ቁጥር መቀየር
+            const phoneInt = parseInt(rawPhone, 10);
+            if (isNaN(phoneInt)) return alert("እባክዎ ትክክለኛ የስልክ ቁጥር ብቻ ያስገቡ!");
 
-            if (existingUser) return alert("ይህ ስልክ ቁጥር አስቀድሞ ተመዝግቧል!");
+            try {
+                // በቅድሚያ ይሄ ስልክ ቁጥር መኖሩን ማረጋገጥ
+                const { data: existingUser, error: checkError } = await _supabase
+                    .from('users')
+                    .select('*')
+                    .eq('telegram_id', phoneInt)
+                    .maybeSingle();
 
-            // አዲስ ተጠቃሚ መመዝገብ (የመጀመሪያ ቦነስ 50 ብር እንስጠው)
-            const { data: newUser, error } = await _supabase
-                .from('users')
-                .insert([{ 
-                    telegram_id: phone, 
-                    username: inviteCode || 'NoInvite', 
-                    first_name: "User_" + phone.substring(phone.length - 4), 
-                    balance: 50.00 
-                }])
-                .select().single();
+                if (checkError) {
+                    return alert("የዳታቤዝ ግንኙነት ችግር (Check Error): " + checkError.message);
+                }
 
-            if (!error && newUser) {
+                if (existingUser) return alert("ይህ ስልክ ቁጥር አስቀድሞ ተመዝግቧል! እባክዎ ይግቡ።");
+
+                // አዲስ ተጠቃሚ መመዝገብ (የመጀመሪያ ቦነስ 50 ብር)
+                const { data: newUser, error: insertError } = await _supabase
+                    .from('users')
+                    .insert([{ 
+                        telegram_id: phoneInt, 
+                        username: inviteCode ? inviteCode.substring(0, 20) : 'NoInvite', 
+                        first_name: "User_" + rawPhone.substring(rawPhone.length - 4), 
+                        balance: 50.00 
+                    }])
+                    .select()
+                    .maybeSingle();
+
+                if (insertError) {
+                    return alert(`የምዝገባ ስህተት አጋጥሟል (Error: ${insertError.message})`);
+                }
+
+                // ሰንጠረዡ ባዶ ቢመልስ እንኳን ዳታውን እዚህ ፈጥረን እናስገባዋለን
+                currentUser = newUser || { telegram_id: phoneInt, first_name: "User_" + rawPhone.substring(rawPhone.length - 4), balance: 50.00 };
                 alert("ምዝገባው ተሳክቷል! የ 50 ETB መመዝገቢያ ስጦታ አግኝተዋል።");
-                currentUser = newUser;
                 enterMainApp();
-            } else {
-                alert("የምዝገባ ስህተት አጋጥሟል፣ እባክዎ እንደገና ይሞክሩ።");
+
+            } catch (e) {
+                alert("ያልታወቀ ስህተት አጋጥሟል፡ " + e.message);
             }
         }
 
         // 2. LOGIN
         async function handleLogin() {
-            const phone = document.getElementById('login-phone').value.trim();
+            const rawPhone = document.getElementById('login-phone').value.trim();
             const password = document.getElementById('login-pass').value.trim();
 
-            if (!phone || !password) return alert("እባክዎ ስልክ እና ፓስወርድ ያስገቡ!");
+            if (!rawPhone || !password) return alert("እባክዎ ስልክ እና ፓስወርድ ያስገቡ!");
+            
+            const phoneInt = parseInt(rawPhone, 10);
+            if (isNaN(phoneInt)) return alert("እባክዎ ትክክለኛ ቁጥር ያስገቡ!");
 
-            const { data: user, error } = await _supabase
-                .from('users')
-                .select('*')
-                .eq('telegram_id', phone)
-                .maybeSingle();
+            try {
+                const { data: user, error } = await _supabase
+                    .from('users')
+                    .select('*')
+                    .eq('telegram_id', phoneInt)
+                    .maybeSingle();
 
-            if (user) {
-                currentUser = user;
-                enterMainApp();
-            } else {
-                alert("የስልክ ቁጥር ወይም ፓስወርድ ተሳስቷል!");
+                if (error) return alert("የመግቢያ ስህተት: " + error.message);
+
+                if (user) {
+                    currentUser = user;
+                    enterMainApp();
+                } else {
+                    alert("የስልክ ቁጥር አልተገኘም! እባክዎ አስቀድመው ይመዝገቡ።");
+                }
+            } catch(e) {
+                alert("የግንኙነት ስህተት፡ " + e.message);
             }
         }
 
         // 3. FORGOT PASSWORD
         async function handleForgotPassword() {
-            const phone = document.getElementById('forgot-phone').value.trim();
+            const rawPhone = document.getElementById('forgot-phone').value.trim();
             const newPass = document.getElementById('forgot-new-pass').value.trim();
 
-            if (!phone || !newPass) return alert("እባክዎ ሁሉንም ክፍሎች ይሙሉ!");
+            if (!rawPhone || !newPass) return alert("እባክዎ ሁሉንም ክፍሎች ይሙሉ!");
+            
+            const phoneInt = parseInt(rawPhone, 10);
+            if (isNaN(phoneInt)) return alert("ትክክለኛ ቁጥር ያስገቡ!");
 
-            const { data: user } = await _supabase
-                .from('users')
-                .select('*')
-                .eq('telegram_id', phone)
-                .maybeSingle();
+            try {
+                const { data: user, error } = await _supabase
+                    .from('users')
+                    .select('*')
+                    .eq('telegram_id', phoneInt)
+                    .maybeSingle();
 
-            if (!user) return alert("ይህ ስልክ ቁጥር በሲስተሙ ውስጥ አልተገኘም!");
+                if (!user) return alert("ይህ ስልክ ቁጥር በሲስተሙ ውስጥ አልተገኘም!");
 
-            alert("የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል! አሁን መግባት ይችላሉ።");
-            showAuthBox('login');
+                alert("የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል! አሁን መግባት ይችላሉ።");
+                showAuthBox('login');
+            } catch (e) {
+                alert("የማደስ ስህተት፡ " + e.message);
+            }
         }
 
         function enterMainApp() {
@@ -704,8 +735,8 @@
         function renderUI() {
             if (!currentUser) return;
             document.querySelectorAll('.user-balance-txt').forEach(el => el.innerText = parseFloat(currentUser.balance).toFixed(2));
-            document.getElementById('profile-name').innerText = currentUser.first_name;
-            document.getElementById('user-initial').innerText = currentUser.first_name[0].toUpperCase();
+            document.getElementById('profile-name').innerText = currentUser.first_name || "User";
+            document.getElementById('user-initial').innerText = currentUser.first_name ? currentUser.first_name[0].toUpperCase() : "U";
             document.getElementById('member-phone').innerText = currentUser.telegram_id;
         }
 
@@ -777,7 +808,6 @@
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.visibility = 'hidden';
-                    // Splash ሲጠፋ ቀጥታ የ Login ገጽ እንዲመጣ ማድረግ
                     document.getElementById('auth-system').style.display = 'flex';
                 }, 500);
             }, 2000);
