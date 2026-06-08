@@ -385,20 +385,17 @@
 </head>
 <body>
 
-    <!-- SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="splash-logo">Z-TIME</div>
         <div class="splash-loader"></div>
     </div>
 
-    <!-- AUTHENTICATION CONTAINER (LOGIN / REGISTER / FORGOT) -->
     <div id="auth-system" class="auth-container" style="display: none;">
         <div class="auth-header">
             <div class="auth-logo">Z-TIME</div>
             <div class="auth-subtitle">Premium Gaming Arena</div>
         </div>
 
-        <!-- 1. LOGIN SCREEN -->
         <div id="box-login" class="auth-card">
             <div class="auth-title">እንኳን ደህና መጡ</div>
             <div class="input-group">
@@ -418,7 +415,6 @@
             </div>
         </div>
 
-        <!-- 2. REGISTER SCREEN -->
         <div id="box-register" class="auth-card" style="display: none;">
             <div class="auth-title">አዲስ አካውንት መፍጠሪያ</div>
             <div class="input-group">
@@ -439,7 +435,6 @@
             </div>
         </div>
 
-        <!-- 3. FORGOT PASSWORD SCREEN -->
         <div id="box-forgot" class="auth-card" style="display: none;">
             <div class="auth-title">የይለፍ ቃል ማደሻ</div>
             <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 15px;">የመዘገቡበትን ስልክ ቁጥር ያስገቡ፣ አዲስ ፓስወርድ እንዲፈጥሩ ይደረጋል።</p>
@@ -458,7 +453,6 @@
         </div>
     </div>
 
-    <!-- MAIN GAME APPLICATION -->
     <div id="main-app-content" style="opacity: 0; pointer-events: none; transition: opacity 0.4s;">
         <div class="app-header">
             <div class="brand-logo">Z-TIME</div>
@@ -595,33 +589,39 @@
             try {
                 _supabase = window.supabase.createClient(S_URL, S_KEY);
             } catch (e) {
-                console.error("Supabase link error:", e);
+                console.error("Supabase initialization error:", e);
             }
         }
 
-        // Auth Screens Changer
+        // Helper to catch network errors cleanly
+        function handleFetchError(err) {
+            if (err && (err.message === "Failed to fetch" || err.status === 0)) {
+                return "የእርስዎ የኢንተርኔት ግንኙነት ተቋርጧል! እባክዎ ኮኔክሽንዎን ያረጋግጡ።";
+            }
+            return err ? err.message : "ያልታወቀ ስህተት";
+        }
+
         function showAuthBox(type) {
             document.getElementById('box-login').style.display = type === 'login' ? 'block' : 'none';
             document.getElementById('box-register').style.display = type === 'register' ? 'block' : 'none';
             document.getElementById('box-forgot').style.display = type === 'forgot' ? 'block' : 'none';
         }
 
-        // --- AUTH ACTION LOGICS (STABLE VERSION) ---
-        
-        // 1. REGISTER
+        // 1. REGISTER LOGIC
         async function handleRegister() {
+            if (!_supabase) return alert("ሲስተሙ አልተጫነም! እባክዎ ገጹን እንደገና ያድሱት።");
+
             const rawPhone = document.getElementById('reg-phone').value.trim();
             const password = document.getElementById('reg-pass').value.trim();
             const inviteCode = document.getElementById('reg-invite').value.trim();
 
             if (!rawPhone || !password) return alert("እባክዎ ስልክ ቁጥር እና ፓስወርድ ያስገቡ!");
             
-            // የ Supabaseን የቁጥር ገደብ (BigInt) ለማርካት ስልኩን ወደ ንጹህ ቁጥር መቀየር
             const phoneInt = parseInt(rawPhone, 10);
             if (isNaN(phoneInt)) return alert("እባክዎ ትክክለኛ የስልክ ቁጥር ብቻ ያስገቡ!");
 
             try {
-                // በቅድሚያ ይሄ ስልክ ቁጥር መኖሩን ማረጋገጥ
+                // Check if user already exists
                 const { data: existingUser, error: checkError } = await _supabase
                     .from('users')
                     .select('*')
@@ -629,12 +629,12 @@
                     .maybeSingle();
 
                 if (checkError) {
-                    return alert("የዳታቤዝ ግንኙነት ችግር (Check Error): " + checkError.message);
+                    return alert("የዳታቤዝ ግንኙነት ችግር: " + handleFetchError(checkError));
                 }
 
                 if (existingUser) return alert("ይህ ስልክ ቁጥር አስቀድሞ ተመዝግቧል! እባክዎ ይግቡ።");
 
-                // አዲስ ተጠቃሚ መመዝገብ (የመጀመሪያ ቦነስ 50 ብር)
+                // Save new user info
                 const { data: newUser, error: insertError } = await _supabase
                     .from('users')
                     .insert([{ 
@@ -647,21 +647,22 @@
                     .maybeSingle();
 
                 if (insertError) {
-                    return alert(`የምዝገባ ስህተት አጋጥሟል (Error: ${insertError.message})`);
+                    return alert("የምዝገባ ስህተት አጋጥሟል: " + handleFetchError(insertError));
                 }
 
-                // ሰንጠረዡ ባዶ ቢመልስ እንኳን ዳታውን እዚህ ፈጥረን እናስገባዋለን
                 currentUser = newUser || { telegram_id: phoneInt, first_name: "User_" + rawPhone.substring(rawPhone.length - 4), balance: 50.00 };
                 alert("ምዝገባው ተሳክቷል! የ 50 ETB መመዝገቢያ ስጦታ አግኝተዋል።");
                 enterMainApp();
 
             } catch (e) {
-                alert("ያልታወቀ ስህተት አጋጥሟል፡ " + e.message);
+                alert("የማውረድ ስህተት አጋጥሟል: " + handleFetchError(e));
             }
         }
 
-        // 2. LOGIN
+        // 2. LOGIN LOGIC
         async function handleLogin() {
+            if (!_supabase) return alert("ሲስተሙ አልተጫነም! እባክዎ ገጹን እንደገና ያድሱት።");
+
             const rawPhone = document.getElementById('login-phone').value.trim();
             const password = document.getElementById('login-pass').value.trim();
 
@@ -677,7 +678,7 @@
                     .eq('telegram_id', phoneInt)
                     .maybeSingle();
 
-                if (error) return alert("የመግቢያ ስህተት: " + error.message);
+                if (error) return alert("የመግቢያ ስህተት: " + handleFetchError(error));
 
                 if (user) {
                     currentUser = user;
@@ -686,12 +687,14 @@
                     alert("የስልክ ቁጥር አልተገኘም! እባክዎ አስቀድመው ይመዝገቡ።");
                 }
             } catch(e) {
-                alert("የግንኙነት ስህተት፡ " + e.message);
+                alert("የግንኙነት ስህተት: " + handleFetchError(e));
             }
         }
 
-        // 3. FORGOT PASSWORD
+        // 3. FORGOT PASSWORD LOGIC
         async function handleForgotPassword() {
+            if (!_supabase) return alert("ሲስተሙ አልተጫነም!");
+
             const rawPhone = document.getElementById('forgot-phone').value.trim();
             const newPass = document.getElementById('forgot-new-pass').value.trim();
 
@@ -707,12 +710,13 @@
                     .eq('telegram_id', phoneInt)
                     .maybeSingle();
 
+                if (error) return alert("የዳታቤዝ ግንኙነት ችግር: " + handleFetchError(error));
                 if (!user) return alert("ይህ ስልክ ቁጥር በሲስተሙ ውስጥ አልተገኘም!");
 
                 alert("የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል! አሁን መግባት ይችላሉ።");
                 showAuthBox('login');
             } catch (e) {
-                alert("የማደስ ስህተት፡ " + e.message);
+                alert("የማደስ ስህተት: " + handleFetchError(e));
             }
         }
 
@@ -789,7 +793,11 @@
                 }
 
                 if(_supabase) {
-                    await _supabase.from('users').update({ balance: newBal }).eq('telegram_id', currentUser.telegram_id);
+                    try {
+                        await _supabase.from('users').update({ balance: newBal }).eq('telegram_id', currentUser.telegram_id);
+                    } catch(e) {
+                        console.error("Balance update background error", e);
+                    }
                 }
 
                 currentUser.balance = newBal;
@@ -801,15 +809,19 @@
         window.onload = () => {
             initSupabase();
             const tg = window.Telegram.WebApp;
-            tg.expand();
+            if (tg && typeof tg.expand === 'function') {
+                tg.expand();
+            }
             
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.visibility = 'hidden';
-                    document.getElementById('auth-system').style.display = 'flex';
-                }, 500);
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.visibility = 'hidden';
+                        document.getElementById('auth-system').style.display = 'flex';
+                    }, 500);
+                }
             }, 2000);
         };
     </script>
