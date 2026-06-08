@@ -39,6 +39,34 @@
             overflow-x: hidden;
         }
 
+        /* ----- GAME SPLASH SCREEN ----- */
+        .game-splash {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0b0e14, #151a24);
+            z-index: 4000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .game-splash.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .splash-icon {
+            font-size: 70px;
+            margin-bottom: 20px;
+            animation: bounce 1.5s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+
         /* ----- AUTH LOADING BLOCKER ----- */
         .loading-overlay {
             position: fixed;
@@ -197,7 +225,7 @@
         .keno-num-80.drawn { background: var(--accent-gold); color: #000; }
         .keno-num-80.hit { background: var(--accent-green); color: #fff; }
 
-        /* BET CONTROLLER (+- INTERVAL) */
+        /* BET CONTROLLER */
         .bet-control-row {
             display: flex;
             align-items: center;
@@ -272,17 +300,20 @@
 </head>
 <body>
 
-    <!-- GLOBAL LOADING OVERLAY -->
     <div id="global-loader" class="loading-overlay"><div class="spinner"></div></div>
 
-    <!-- AUTHENTICATION SYSTEM -->
+    <div id="game-splash-screen" class="game-splash">
+        <div id="splash-icon" class="splash-icon">🎮</div>
+        <h2 id="splash-title" style="color: #fff; font-weight: 600; letter-spacing: 1px;">LOADING GAME...</h2>
+        <p style="color: var(--accent-blue); font-size: 13px; margin-top: 5px;">Z-Time Premium Arena</p>
+    </div>
+
     <div id="auth-system" class="auth-container">
         <div class="auth-header">
             <div class="auth-logo">Z-TIME</div>
             <p style="color:var(--text-muted)">Premium Mega Gaming Arena</p>
         </div>
 
-        <!-- LOGIN -->
         <div id="box-login" class="auth-card">
             <div class="auth-title">መግቢያ (Login)</div>
             <div class="input-group"><i class="fa-solid fa-phone"></i><input type="number" id="login-phone" class="auth-input" placeholder="የስልክ ቁጥር"></div>
@@ -291,7 +322,6 @@
             <p style="text-align:center; margin-top:15px; font-size:13px; color:var(--text-muted)">አካውንት የሎትም? <span class="auth-link" style="color:var(--accent-blue)" onclick="showAuthBox('register')">ይመዝገቡ</span></p>
         </div>
 
-        <!-- REGISTER -->
         <div id="box-register" class="auth-card" style="display: none;">
             <div class="auth-title">ምዝገባ (Register)</div>
             <div class="input-group"><i class="fa-solid fa-phone"></i><input type="number" id="reg-phone" class="auth-input" placeholder="የስልክ ቁጥር"></div>
@@ -302,39 +332,36 @@
         </div>
     </div>
 
-    <!-- MAIN APP CONTENT -->
     <div id="main-app-content" style="opacity:0; pointer-events:none;">
         <div class="app-header">
             <div class="brand-logo">Z-TIME</div>
             <div class="balance-badge"><i class="fa-solid fa-wallet"></i> <span class="user-balance-txt">0.00</span> ETB</div>
         </div>
 
-        <!-- GAMES VIEW -->
         <div id="view-games" class="view-content active">
             <div id="games-menu">
                 <h3 class="section-title">🎮 ጨዋታዎችን ይምረጡ</h3>
                 <div class="games-grid">
-                    <div class="game-item-card" onclick="openGame('keno')">
+                    <div class="game-item-card" onclick="triggerGameSplash('keno', 'Z-KENO MAX', '🎰')">
                         <div class="game-image-holder" style="background:linear-gradient(135deg, #27ae60, #2c3e50)"><i class="fa-solid fa-table-cells" style="color:#2ecc71"></i></div>
                         <div class="game-info-box"><h4>Keno 80</h4><p>ከ 1 እስከ 80 እጣ</p></div>
                     </div>
-                    <div class="game-item-card" onclick="openGame('coinround')">
+                    <div class="game-item-card" onclick="triggerGameSplash('coinround', 'SPIN ROUND 40', '🎡')">
                         <div class="game-image-holder" style="background:linear-gradient(135deg, #8e44ad, #2c3e50)"><i class="fa-solid fa-rotate" style="color:#a55eea"></i></div>
                         <div class="game-info-box"><h4>Spin Round 40</h4><p>ቀይ ጥቁር ምርጫ</p></div>
                     </div>
-                    <div class="game-item-card" onclick="openGame('avatarhold')">
+                    <div class="game-item-card" onclick="triggerGameSplash('avatarhold', 'HOLD AVATAR', '🚀')">
                         <div class="game-image-holder" style="background:linear-gradient(135deg, #e74c3c, #1a252f)"><i class="fa-solid fa-burst" style="color:#e74c3c"></i></div>
                         <div class="game-info-box"><h4>Hold Avatar</h4><p>ተጭነው ይቆጥሩ</p></div>
                     </div>
                 </div>
             </div>
 
-            <!-- KENO 1-80 ARENA -->
             <div id="arena-keno" style="display:none;">
                 <div class="btn-back" onclick="backToMenu()"><i class="fa-solid fa-arrow-left"></i> ተመለስ</div>
                 <div class="z-card">
                     <h4 style="color:var(--accent-blue); text-align:center;">Z-KENO MAX (1-80)</h4>
-                    <p style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:10px;">ከ 2 እስከ 10 ቁጥሮችን ይገምቱ። 2 ቁጥር በትክክል ካገኙ 1 እጥፍ ያተርፋሉ!</p>
+                    <p style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:10px;">ከ 2 እስከ 10 ቁጥሮችን ይገምቱ። 2 ቁጥር በትክክል ካገኙ 2 እጥፍ ያተርፋሉ!</p>
                     
                     <div class="keno-grid-80" id="keno-board-80"></div>
                     
@@ -349,7 +376,6 @@
                 </div>
             </div>
 
-            <!-- SPIN ROUND 1-40 ARENA -->
             <div id="arena-coinround" style="display:none;">
                 <div class="btn-back" onclick="backToMenu()"><i class="fa-solid fa-arrow-left"></i> ተመለስ</div>
                 <div class="z-card">
@@ -376,7 +402,6 @@
                 </div>
             </div>
 
-            <!-- AVATAR HOLD/CRASH ARENA -->
             <div id="arena-avatarhold" style="display:none;">
                 <div class="btn-back" onclick="backToMenu()"><i class="fa-solid fa-arrow-left"></i> ተመለስ</div>
                 <div class="z-card" style="text-align:center;">
@@ -396,7 +421,6 @@
             </div>
         </div>
 
-        <!-- WALLET VIEW (MATCHES SCREENSHOT_20260608-131540.PNG) -->
         <div id="view-wallet" class="view-content">
             <h3 class="section-title">💰 የገንዘብ ቦርሳ (Wallet)</h3>
             <div class="z-card" style="background: linear-gradient(135deg, #151a24, #1c2331); border: 1px solid rgba(0, 210, 255, 0.2);">
@@ -404,7 +428,6 @@
                 <h2 style="color:var(--accent-blue); font-size:34px; margin-top:5px; font-weight:700;"><span class="user-balance-txt">0.00</span> <span style="font-size:18px; color:#fff;">ETB</span></h2>
             </div>
             
-            <!-- DEPOSIT CARD (MATCHES SCREENSHOT_20260608-131543.PNG) -->
             <div class="z-card" style="border-top: 3px solid var(--accent-green);">
                 <h4 style="margin-bottom:12px; color:var(--accent-green); display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-money-bill-wave"></i> ገንዘብ ማስገቢያ (Deposit)</h4>
                 
@@ -420,16 +443,14 @@
                 <button class="z-btn btn-success" onclick="handleDeposit()"><i class="fa-solid fa-paper-plane"></i> በቴሌብር ያስገቡ</button>
             </div>
 
-            <!-- WITHDRAW CARD (MATCHES SCREENSHOT_20260608-131546.PNG) -->
             <div class="z-card" style="border-top: 3px solid var(--accent-red);">
                 <h4 style="margin-bottom:12px; color:var(--accent-red); display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-building-columns"></i> ገንዘብ ማውጫ (Withdraw)</h4>
                 <div class="input-group"><i class="fa-solid fa-phone"></i><input type="number" id="wit-phone" class="auth-input" placeholder="የሚላክበት የቴሌብር ስልክ ቁጥር" style="padding-left:45px;"></div>
                 <div class="input-group"><i class="fa-solid fa-dollar-sign"></i><input type="number" id="wit-amount" class="auth-input" placeholder="የሚያወጡት መጠን (ETB)" style="padding-left:45px;"></div>
-                <button class="z-btn btn-danger" onclick="handleWithdraw()"><i class="fa-solid fa-wallet"></i> ወዲያውኑ ወደ ቴሌብር ያውጡ</button>
+                <button class="z-btn btn-danger" onclick="handleWithdraw()"><i class="fa-solid fa-wallet"></i> ወደ ቴሌብር ያውጡ</button>
             </div>
         </div>
 
-        <!-- INVITE VIEW -->
         <div id="view-invite" class="view-content">
             <h3 class="section-title">🎁 ሰዎችን ጋብዘው ይርብሹ</h3>
             <div class="z-card" style="text-align:center;">
@@ -442,7 +463,6 @@
             </div>
         </div>
 
-        <!-- PROFILE VIEW -->
         <div id="view-profile" class="view-content">
             <h3 class="section-title">👤 የእኔ አካውንት</h3>
             <div class="z-card" style="text-align:center;">
@@ -453,7 +473,6 @@
             <button class="z-btn btn-danger" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ውጣ (Logout)</button>
         </div>
 
-        <!-- BOTTOM NAV -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="switchView('view-games', this)"><i class="fa-solid fa-gamepad"></i>ጌሞች</div>
             <div class="nav-item" onclick="switchView('view-wallet', this)"><i class="fa-solid fa-wallet"></i>ዋሌት</div>
@@ -474,6 +493,23 @@
         let holdMultiplier = 1.0;
         let isHolding = false;
 
+        // SOUND EFFECTS AUDIO SYSTEM
+        const sounds = {
+            click: new Audio("https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav"),
+            spin: new Audio("https://assets.mixkit.co/active_storage/sfx/2019/2019-84.wav"),
+            win: new Audio("https://assets.mixkit.co/active_storage/sfx/1435/1435-84.wav"),
+            lose: new Audio("https://assets.mixkit.co/active_storage/sfx/2513/2513-84.wav")
+        };
+
+        function playSound(type) {
+            try {
+                if (sounds[type]) {
+                    sounds[type].currentTime = 0;
+                    sounds[type].play().catch(e => console.log("Audio play blocked by browser. Need user interaction first."));
+                }
+            } catch (e) { console.error("Sound Error:", e); }
+        }
+
         function initSupabase() {
             try {
                 _supabase = window.supabase.createClient(S_URL, S_KEY, { auth: { persistSession: false } });
@@ -482,9 +518,22 @@
 
         function showLoader(show) {
             const l = document.getElementById('global-loader');
-            if(l) {
-                if(show) l.classList.add('active'); else l.classList.remove('active');
-            }
+            if(l) { if(show) l.classList.add('active'); else l.classList.remove('active'); }
+        }
+
+        // SPLASH SCREEN TRIGGER FUNCTION
+        function triggerGameSplash(gameKey, gameTitle, gameIcon) {
+            playSound('click');
+            const splash = document.getElementById('game-splash-screen');
+            document.getElementById('splash-title').innerText = gameTitle.toUpperCase();
+            document.getElementById('splash-icon').innerText = gameIcon;
+            
+            splash.classList.add('active');
+
+            setTimeout(() => {
+                splash.classList.remove('active');
+                openGame(gameKey);
+            }, 2000); // 2 Seconds Splash Screen delay
         }
 
         function showAuthBox(type) {
@@ -508,13 +557,13 @@
                 
                 if(user && user.password === pass) {
                     currentUser = user; 
+                    playSound('win');
                     enterApp();
                 } else { 
+                    playSound('lose');
                     alert("የስልክ ቁጥር ወይም የይለፍ ቃል አልተዛመደም!"); 
                 }
-            } catch(e) { 
-                alert("የግንኙነት ስህተት አጋጥሟል!"); 
-            }
+            } catch(e) { alert("የግንኙነት ስህተት አጋጥሟል!"); }
             showLoader(false);
         }
 
@@ -547,6 +596,7 @@
                 if(inviterUser) {
                     await _supabase.from('users').update({ balance: inviterUser.balance + 10.00 }).eq('id', inviterUser.id);
                 }
+                playSound('win');
                 alert(`ምዝገባው ተሳክቷል! የ ${initialBalance} ETB ቦነስ አግኝተዋል።`);
                 enterApp();
             } catch(e) { alert("የምዝገባ ስህተት!"); }
@@ -561,6 +611,7 @@
         }
 
         function logout() {
+            playSound('click');
             currentUser = null;
             document.getElementById('main-app-content').style.opacity = '0';
             document.getElementById('auth-system').style.display = 'flex';
@@ -577,6 +628,7 @@
         }
 
         function switchView(vId, el) {
+            playSound('click');
             document.querySelectorAll('.view-content').forEach(v => v.style.display = 'none');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(vId).style.display = 'block';
@@ -592,6 +644,7 @@
         }
 
         function backToMenu() {
+            playSound('click');
             document.getElementById('arena-coinround').style.display = 'none';
             document.getElementById('arena-keno').style.display = 'none';
             document.getElementById('arena-avatarhold').style.display = 'none';
@@ -609,6 +662,7 @@
                 n.id = "k80-num-" + i;
                 n.innerText = i;
                 n.onclick = () => {
+                    playSound('click');
                     if(n.classList.contains('selected')) {
                         n.classList.remove('selected');
                         selectedKenoNums = selectedKenoNums.filter(x => x !== i);
@@ -622,11 +676,13 @@
             }
         }
         function adjustBet(val) {
+            playSound('click');
             let cur = parseInt(document.getElementById('keno-bet').value) || 5;
             cur += val; if(cur < 5) cur = 5;
             document.getElementById('keno-bet').value = cur;
         }
         function clearKenoBet() {
+            playSound('click');
             document.querySelectorAll('.keno-num-80').forEach(e => e.classList.remove('selected','drawn','hit'));
             selectedKenoNums = [];
         }
@@ -636,6 +692,7 @@
             const bet = parseInt(document.getElementById('keno-bet').value);
             if(bet > currentUser.balance) return alert("በቂ ባላንስ የሎትም!");
 
+            playSound('spin');
             showLoader(true);
             document.querySelectorAll('.keno-num-80').forEach(e => e.classList.remove('drawn','hit'));
 
@@ -665,6 +722,7 @@
 
             setTimeout(async () => {
                 showLoader(false);
+                if (multiplier >= 1) playSound('win'); else playSound('lose');
                 alert(`የወጡት ቁጥሮች ተጠናቀዋል! የገጠሙዎት ቁጥሮች፦ ${hits} ያገኙት ማባዣ፦ ${multiplier}x`);
                 updateUI();
                 await _supabase.from('users').update({ balance: currentUser.balance }).eq('telegram_id', currentUser.telegram_id);
@@ -685,6 +743,7 @@
             }
         }
         function toggleSpinChip(type) {
+            playSound('click');
             const el = event.currentTarget;
             if(el.classList.contains('active')) {
                 el.classList.remove('active');
@@ -696,6 +755,7 @@
             }
         }
         function adjustSpinBet(val) {
+            playSound('click');
             let cur = parseInt(document.getElementById('spin-bet').value) || 5;
             cur += val; if(cur < 5) cur = 5;
             document.getElementById('spin-bet').value = cur;
@@ -706,6 +766,7 @@
             const bet = parseInt(document.getElementById('spin-bet').value) * selectedSpinChips.length;
             if(bet > currentUser.balance) return alert("በቂ ባላንስ የሎትም!");
 
+            playSound('spin');
             showLoader(true);
             document.querySelectorAll('.spin-num-40').forEach(e => e.classList.remove('highlighted'));
 
@@ -729,6 +790,7 @@
                     if(win) totalPayout += (bet / selectedSpinChips.length) * 2;
                 });
 
+                if (totalPayout > 0) playSound('win'); else playSound('lose');
                 currentUser.balance = (currentUser.balance - bet) + totalPayout;
                 alert(`የወጣው ቁጥር፦ ${winningNum} ነው። ጠቅላላ የተመለሰልዎት፦ ${totalPayout} ETB`);
                 updateUI();
@@ -738,6 +800,7 @@
 
         /* ----- AVATAR HOLD & CRASH ----- */
         function adjustAvatarBet(val) {
+            playSound('click');
             let cur = parseInt(document.getElementById('avatar-bet').value) || 5;
             cur += val; if(cur < 5) cur = 5;
             document.getElementById('avatar-bet').value = cur;
@@ -760,6 +823,7 @@
             document.getElementById('avatar-multiplier-text').style.color = "var(--accent-green)";
             
             const crashPoint = (Math.random() * 4 + 1.1).toFixed(2);
+            playSound('spin');
 
             holdInterval = setInterval(async () => {
                 if(!isHolding) return;
@@ -769,6 +833,7 @@
                 if(holdMultiplier >= crashPoint) {
                     isHolding = false;
                     clearInterval(holdInterval);
+                    playSound('lose');
                     document.getElementById('avatar-multiplier-text').innerText = "💥 CRASHED!";
                     document.getElementById('avatar-multiplier-text').style.color = "var(--accent-red)";
                     currentUser.balance -= bet;
@@ -787,6 +852,7 @@
             const winAmt = bet * holdMultiplier;
             currentUser.balance = (currentUser.balance - bet) + winAmt;
             
+            playSound('win');
             alert(`በሰዓቱ ለቀቁ! 🎉 ${holdMultiplier.toFixed(2)}x አግኝተው ${winAmt.toFixed(2)} ETB አሸነፉ!`);
             updateUI();
             await _supabase.from('users').update({ balance: currentUser.balance }).eq('telegram_id', currentUser.telegram_id);
@@ -794,6 +860,7 @@
 
         /* ----- DEPOSIT & WITHDRAWAL ----- */
         async function handleDeposit() {
+            playSound('click');
             const amt = parseFloat(document.getElementById('dep-amount').value);
             const txid = document.getElementById('dep-txid').value.trim();
             if(!amt || !txid) return alert("እባክዎ መጠኑን እና የ Transaction ID ያስገቡ!");
@@ -809,6 +876,7 @@
         }
 
         async function handleWithdraw() {
+            playSound('click');
             const wPhone = document.getElementById('wit-phone').value.trim();
             const amt = parseFloat(document.getElementById('wit-amount').value);
             if(!wPhone || !amt || amt <= 0) return alert("እባክዎ ስልክ እና ትክክለኛ መጠን ያስገቡ!");
@@ -826,12 +894,13 @@
         }
 
         function copyInviteLink() {
+            playSound('click');
             const link = document.getElementById('my-invite-link-txt').innerText;
             navigator.clipboard.writeText(link);
             alert("የሪፈራል ግብዣ ሊንክዎ ኮፒ ተደርጓል!");
         }
 
-        // ገጹ ሙሉ በሙሉ ሲጫን ብቻ ጨዋታዎችን እንዲያዘጋጅ ተደርጓል (Fixes the login crash)
+        // INITIALIZE ON LOAD
         window.addEventListener('DOMContentLoaded', () => {
             initSupabase();
             buildKenoBoard80();
