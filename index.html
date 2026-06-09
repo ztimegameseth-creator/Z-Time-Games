@@ -3,85 +3,582 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Z-Time Ultra Premium Arena</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>Z-Time Infinity Premium Arena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
-            --bg-dark: #10151f;
-            --bg-card: #17212f;
-            --bg-input: #0b0f17;
-            --accent-cyan: #00d2ff;
-            --accent-gold: #ffcc00;
-            --accent-red: #f44336;
-            --accent-green: #00e676;
-            --text-white: #ffffff;
-            --text-grey: #7f8c9d;
-            --border-line: #243242;
+            --bg-main: #0c111b;
+            --bg-panel: #151d2a;
+            --bg-field: #080c12;
+            --cyan: #00d2ff;
+            --gold: #ffcc00;
+            --red: #f44336;
+            --green: #00e676;
+            --purple: #9b59b6;
+            --text-w: #ffffff;
+            --text-g: #6f7d95;
+            --border: #202b3c;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; -webkit-user-select: none; }
-        body { background-color: var(--bg-dark); color: var(--text-white); padding-bottom: 75px; overflow-x: hidden; }
+        body { background-color: var(--bg-main); color: var(--text-w); padding-bottom: 80px; overflow-x: hidden; }
 
-        /* ----- PRO SPLASH SCREEN ----- */
-        .game-splash {
-            position: fixed; inset: 0; background: radial-gradient(circle, #1a2636 0%, #0b0f17 100%);
-            z-index: 4000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        /* SPLASH SYSTEM */
+        .game-splash { position: fixed; inset: 0; background: radial-gradient(circle, #1a2536 0%, #06090e 100%); z-index: 4000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .game-splash.active { opacity: 1; pointer-events: auto; }
-        .splash-loader-bar { width: 160px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 20px; overflow: hidden; }
-        .splash-progress { width: 0%; height: 100%; background: var(--accent-cyan); animation: loadProgress 1.8s forwards; }
-        @keyframes loadProgress { to { width: 100%; } }
-
-        /* GLOBAL LOADER */
-        .loading-overlay { position: fixed; inset: 0; background: rgba(11, 15, 23, 0.9); z-index: 6000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
-        .loading-overlay.active { opacity: 1; pointer-events: auto; }
-        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 0.7s linear infinite; }
+        .loader-loop { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.05); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.6s linear infinite; margin-top: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ----- AUTH DESIGN ----- */
-        .auth-container { position: fixed; inset: 0; background: var(--bg-dark); z-index: 5000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
-        .auth-card { background: var(--bg-card); padding: 25px; border-radius: 12px; border: 1px solid var(--border-line); }
-        .auth-input { width: 100%; padding: 12px 12px 12px 40px; background: var(--bg-input); border: 1px solid var(--border-line); color: #fff; border-radius: 8px; font-size: 14px; outline: none; }
-        .input-group { position: relative; margin-bottom: 15px; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-grey); }
-
-        /* ----- MAIN DESIGN ----- */
-        .app-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #131a26; border-bottom: 1px solid var(--border-line); position: sticky; top: 0; z-index: 100; }
-        .balance-badge { background: #0b0f17; border: 1px solid var(--border-line); padding: 5px 12px; border-radius: 6px; font-weight: 700; color: var(--accent-green); font-size: 14px; }
+        /* CORE CONTAINERS */
+        .app-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #111722; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .balance-box { background: var(--bg-field); border: 1px solid var(--border); padding: 6px 14px; border-radius: 4px; font-weight: bold; color: var(--green); font-size: 15px; font-family: 'Oswald', sans-serif; }
         .view-content { display: none; padding: 15px; }
         .view-content.active { display: block; }
 
-        /* MENU GRID */
-        .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
-        .game-card { background: var(--bg-card); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-line); cursor: pointer; position: relative; }
-        .game-card img-placeholder { height: 90px; display: flex; align-items: center; justify-content: center; font-size: 32px; background: linear-gradient(180deg, #1e293b, #131a26); }
-        .game-title-bar { padding: 8px; font-size: 13px; font-weight: bold; text-align: center; background: #1a2433; }
+        /* AUTH GATEWAY */
+        .auth-overlay { position: fixed; inset: 0; background: var(--bg-main); z-index: 5000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
+        .auth-pane { background: var(--bg-panel); padding: 25px; border-radius: 8px; border: 1px solid var(--border); }
+        .auth-input { width: 100%; padding: 12px 12px 12px 40px; background: var(--bg-field); border: 1px solid var(--border); color: #fff; border-radius: 6px; outline: none; margin-bottom: 12px; }
 
-        /* COMMON UI COMPONENTS */
-        .z-btn { padding: 12px; border-radius: 6px; border: none; font-weight: bold; font-size: 14px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-blue { background: #00a8ff; color: #fff; }
-        .btn-green { background: var(--accent-green); color: #000; }
-        .btn-red { background: var(--accent-red); color: #fff; }
-        .btn-back { color: var(--accent-cyan); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 12px; font-size: 13px; }
+        /* RECURRING WIDGETS */
+        .z-btn { padding: 12px; border-radius: 4px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-cyan { background: var(--cyan); color: #000; }
+        .btn-green { background: var(--green); color: #000; }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-back { color: var(--cyan); cursor: pointer; font-size: 13px; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 6px; }
 
-        /* ----- LIVE BETS PANEL (PRO STYLE) ----- */
-        .live-panel-title { font-size: 11px; color: var(--text-grey); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
-        .live-bets-container { background: var(--bg-input); border-radius: 6px; padding: 6px; max-height: 120px; overflow-y: auto; font-size: 11px; border: 1px solid var(--border-line); }
-        .live-bet-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .status-waiting { color: var(--accent-gold); }
-        .status-win { color: var(--accent-green); font-weight: bold; }
+        /* GAME LIVE RADAR & HISTORY */
+        .history-ribbon { display: flex; gap: 6px; overflow-x: auto; padding: 6px 0; margin-bottom: 10px; }
+        .history-node { background: #1a2434; padding: 4px 10px; border-radius: 3px; font-size: 11px; font-weight: bold; min-width: 32px; text-align: center; }
+        .history-node.red-node { background: var(--red); }
+        .history-node.black-node { background: #000; border: 1px solid #333; }
+        .history-node.green-node { background: var(--green); color: #000; }
 
-        /* ----- PRO KENO 1-80 ----- */
-        .keno-grid-80 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin: 10px 0; }
-        .keno-cell { background: #1c2635; border: 1px solid var(--border-line); text-align: center; padding: 8px 0; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        .keno-cell.selected { background: var(--accent-cyan); color: #000; }
-        .keno-cell.drawn { background: #3a4b63; color: #fff; }
-        .keno-cell.hit { background: var(--accent-green); color: #000; box-shadow: 0 0 8px var(--accent-green); }
+        /* SYSTEM TIMERS */
+        .draw-timer-banner { background: #101721; padding: 8px; border-radius: 4px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; }
+        .timer-countdown { font-family: 'Oswald', sans-serif; font-size: 16px; color: var(--gold); }
+
+        /* CHIP ENGINE */
+        .chip-container { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
+        .chip { width: 38px; height: 38px; border-radius: 50%; border: 2px dashed #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.4); }
+        .chip.active { transform: scale(1.15); border-style: solid; box-shadow: 0 0 10px var(--cyan); }
+
+        /* 1. KENO MATRIX */
+        .keno-board { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-bottom: 12px; }
+        .keno-spot { background: #1b2636; border: 1px solid var(--border); text-align: center; padding: 8px 0; font-size: 12px; font-weight: bold; border-radius: 3px; cursor: pointer; }
+        .keno-spot.selected { background: var(--cyan); color: #000; }
+        .keno-spot.drawn { background: #394a61; color: #fff; }
+        .keno-spot.hit { background: var(--green); color: #000; box-shadow: 0 0 8px var(--green); }
+
+        /* 2. ADVANCED ROULETTE BOARD TABLE */
+        .roulette-table-wrapper { overflow-x: auto; margin-bottom: 12px; background: #0a0e14; padding: 6px; border-radius: 4px; border: 1px solid var(--border); }
+        .roulette-grid-36 { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; width: 550px; }
+        .roulette-num-cell { padding: 10px 0; text-align: center; font-weight: bold; font-size: 13px; border-radius: 3px; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
+        .roulette-num-cell.r-red { background: var(--red); color: #fff; }
+        .roulette-num-cell.r-black { background: #151d28; color: #fff; }
+        .roulette-num-cell.r-zero { background: var(--green); color: #000; grid-row: span 3; display: flex; align-items: center; justify-content: center; }
+        .roulette-num-cell.active-bet { border: 2px solid var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+
+        /* 3. AVIATOR MULTI-CONTROL SYSTEM */
+        .aviator-radar-screen { background: #070b11; height: 150px; border-radius: 6px; border: 1px solid var(--border); position: relative; overflow: hidden; margin-bottom: 12px; }
+        .flight-vector { position: absolute; bottom: 15px; left: 15px; font-size: 26px; color: var(--red); transition: all 0.1s linear; transform: rotate(-15deg); }
+        .live-mult-display { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 38px; font-family: 'Oswald', sans-serif; font-weight: 700; color: var(--green); }
+        .aviator-automation-panel { background: #121924; padding: 10px; border-radius: 4px; border: 1px solid var(--border); margin-bottom: 12px; display: flex; justify-content: space-between; gap: 8px; }
+        .auto-toggle-box { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-g); }
+        .auto-input-val { width: 50px; background: var(--bg-field); border: 1px solid var(--border); color: #fff; padding: 4px; border-radius: 3px; text-align: center; font-size: 11px; }
+
+        /* PANEL INTERFACES */
+        .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .game-node-card { background: var(--bg-panel); border-radius: 6px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; }
+        .game-thumb { height: 85px; display: flex; align-items: center; justify-content: center; font-size: 30px; background: linear-gradient(180deg, #1d283a, #0f1520); }
+        .game-lbl { padding: 8px; font-size: 12px; font-weight: bold; text-align: center; background: #182232; letter-spacing: 0.5px; }
+
+        /* BOTTOM NAV BAR */
+        .nav-dock { position: fixed; bottom: 0; left: 0; right: 0; height: 55px; background: #101622; display: flex; border-top: 1px solid var(--border); z-index: 2000; }
+        .dock-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-g); font-size: 11px; cursor: pointer; }
+        .dock-btn i { font-size: 16px; margin-bottom: 2px; }
+        .dock-btn.active { color: var(--cyan); }
+    </style>
+</head>
+<body>
+
+    <!-- SECURE GATEWAY LOGIN -->
+    <div id="gateway-auth" class="auth-overlay">
+        <div style="text-align:center; margin-bottom: 20px;">
+            <h2 style="font-family:'Oswald', sans-serif; font-size:36px; background:linear-gradient(45deg, var(--cyan), var(--green)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Z-TIME INFINITY</h2>
+            <p style="color:var(--text-g); font-size:11px; letter-spacing:1px;">PROFESSIONAL ENTERPRISE GAMING ENGINE</p>
+        </div>
+        <div id="pane-log" class="auth-pane">
+            <input type="number" id="in-phone" class="auth-input" placeholder="Telegram Phone Number">
+            <input type="password" id="in-pass" class="auth-input" placeholder="Security Access Password">
+            <button class="z-btn btn-cyan" style="width:100%;" onclick="executeSystemLogin()">INITIALIZE CREDENTIALS</button>
+            <p style="text-align:center; margin-top:15px; font-size:12px; color:var(--text-g)">No Account node? <span style="color:var(--cyan); cursor:pointer;" onclick="toggleGate('reg')">Register Node</span></p>
+        </div>
+        <div id="pane-reg" class="auth-pane" style="display:none;">
+            <input type="number" id="rg-phone" class="auth-input" placeholder="New Phone Number">
+            <input type="password" id="rg-pass" class="auth-input" placeholder="Set Secure Password">
+            <button class="z-btn btn-green" style="width:100%;" onclick="executeSystemRegister()">BUILD NODE PROFILE</button>
+            <p style="text-align:center; margin-top:15px; font-size:12px; color:var(--text-g)">Has node? <span style="color:var(--cyan); cursor:pointer;" onclick="toggleGate('log')">Login</span></p>
+        </div>
+    </div>
+
+    <!-- DYNAMIC SYSTEM SPLASH SCREEN -->
+    <div id="app-splash" class="game-splash">
+        <div id="splash-ico" style="font-size: 55px;">🛰️</div>
+        <h3 id="splash-title" style="font-family:'Oswald', sans-serif; letter-spacing:1px; margin-top:10px;">MODULE INITIALIZATION</h3>
+        <p style="font-size:11px; color:var(--text-g);">SYNCHRONIZING SECURE DATABASE CHANNELS...</p>
+        <div class="loader-loop"></div>
+    </div>
+
+    <!-- SYSTEM CORE CORE APPLICATION -->
+    <div id="app-universe" style="opacity:0; pointer-events:none;">
+        <div class="app-header">
+            <div style="font-family:'Oswald', sans-serif; font-size:20px; color:var(--cyan);">Z-TIME <span style="color:#fff; font-size:10px;">ULTRA PRO</span></div>
+            <div class="balance-box"><span id="core-balance">0.00</span> ETB</div>
+        </div>
+
+        <!-- MAIN ARENA -->
+        <div id="v-arena" class="view-content active">
+            <h4 style="font-size:12px; color:var(--text-g); text-transform:uppercase; margin-bottom:12px; letter-spacing:0.5px;">Live Betting Modules</h4>
+            <div class="games-grid">
+                <div class="game-node-card" onclick="triggerSplash('keno', 'FAST KENO 80 PRO', '🎲')">
+                    <div class="game-thumb" style="color:var(--green);"><i class="fa-solid fa-table-cells"></i></div>
+                    <div class="game-lbl">FAST KENO 80</div>
+                </div>
+                <div class="game-node-card" onclick="triggerSplash('roulette', 'PREMIUM EURO ROULETTE', '🎡')">
+                    <div class="game-thumb" style="color:var(--gold);"><i class="fa-solid fa-circle-nodes"></i></div>
+                    <div class="game-lbl">EURO ROULETTE</div>
+                </div>
+                <div class="game-node-card" onclick="triggerSplash('aviator', 'AVIATOR CRASH PRO', '🚀')">
+                    <div class="game-thumb" style="color:var(--red);"><i class="fa-solid fa-plane-tail-water"></i></div>
+                    <div class="game-lbl">AVIATOR CRASH</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE A: PRO KENO 80 -->
+        <div id="mod-keno" class="view-content">
+            <div class="btn-back" onclick="closeModule()"><i class="fa-solid fa-chevron-left"></i> LOBBY</div>
+            <div style="background:var(--bg-panel); padding:12px; border-radius:6px; border:1px solid var(--border);">
+                
+                <div class="draw-timer-banner">
+                    <span>NEXT STREAM DRAWING</span>
+                    <div class="timer-countdown" id="keno-timer">00:25</div>
+                </div>
+
+                <div class="history-ribbon" id="keno-history"></div>
+
+                <div class="keno-board" id="keno-board-container"></div>
+
+                <div class="chip-container">
+                    <div class="chip" style="background:#ffcc00; color:#000;" onclick="selectCoreChip(5, this)">5</div>
+                    <div class="chip active" style="background:#9b59b6; color:#fff;" onclick="selectCoreChip(20, this)">20</div>
+                    <div class="chip" style="background:#2980b9; color:#fff;" onclick="selectCoreChip(100, this)">100</div>
+                    <div class="chip" style="background:#27ae60; color:#fff;" onclick="selectCoreChip(500, this)">500</div>
+                </div>
+
+                <button class="z-btn btn-green" style="width:100%;" onclick="registerKenoBet()">LOCK TICKET DATA</button>
+            </div>
+        </div>
+
+        <!-- MODULE B: PREMIUM ROULETTE (BOARD TABLE INTEGRATION) -->
+        <div id="mod-roulette" class="view-content">
+            <div class="btn-back" onclick="closeModule()"><i class="fa-solid fa-chevron-left"></i> LOBBY</div>
+            <div style="background:var(--bg-panel); padding:12px; border-radius:6px; border:1px solid var(--border);">
+                
+                <div class="draw-timer-banner">
+                    <span>ROULETTE WHEEL COOLDOWN</span>
+                    <div class="timer-countdown" id="roulette-timer">00:20</div>
+                </div>
+
+                <div class="history-ribbon" id="roulette-history"></div>
+
+                <!-- FULL 1-36 ROULETTE INTERACTIVE BOARD TABLE -->
+                <div class="roulette-table-wrapper">
+                    <div class="roulette-grid-36" id="roulette-table-numbers"></div>
+                </div>
+
+                <div class="chip-container">
+                    <div class="chip" style="background:#ffcc00; color:#000;" onclick="selectCoreChip(5, this)">5</div>
+                    <div class="chip active" style="background:#9b59b6; color:#fff;" onclick="selectCoreChip(20, this)">20</div>
+                    <div class="chip" style="background:#2980b9; color:#fff;" onclick="selectCoreChip(100, this)">100</div>
+                    <div class="chip" style="background:#27ae60; color:#fff;" onclick="selectCoreChip(500, this)">500</div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; margin-bottom:12px;">
+                    <button class="z-btn btn-red" style="font-size:11px;" onclick="addSideRouletteBet('RED')">RED</button>
+                    <button class="z-btn" style="background:#000; color:#fff; font-size:11px;" onclick="addSideRouletteBet('BLACK')">BLACK</button>
+                    <button class="z-btn btn-cyan" style="font-size:11px;" onclick="addSideRouletteBet('EVEN')">EVEN</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE C: PROFESSIONAL AVIATOR (AUTO CONTROLS INCLUDED) -->
+        <div id="mod-aviator" class="view-content">
+            <div class="btn-back" onclick="closeModule()"><i class="fa-solid fa-chevron-left"></i> LOBBY</div>
+            <div style="background:var(--bg-panel); padding:12px; border-radius:6px; border:1px solid var(--border);">
+                
+                <div class="history-ribbon" id="aviator-history"></div>
+
+                <div class="aviator-radar-screen">
+                    <div class="live-mult-display" id="av-live-factor">1.00x</div>
+                    <div class="flight-vector" id="av-vector-plane"><i class="fa-solid fa-plane-up"></i></div>
+                </div>
+
+                <!-- AVIATOR COMPREHENSIVE AUTOMATION SYSTEM -->
+                <div class="aviator-automation-panel">
+                    <div class="auto-toggle-box">
+                        <input type="checkbox" id="auto-bet-enabled">
+                        <label>Auto Bet</label>
+                    </div>
+                    <div class="auto-toggle-box">
+                        <input type="checkbox" id="auto-cash-enabled">
+                        <label>Auto Cashout</label>
+                        <input type="number" id="auto-cash-trigger" class="auto-input-val" value="2.00" step="0.1">
+                    </div>
+                </div>
+
+                <div class="chip-container">
+                    <div class="chip" style="background:#ffcc00; color:#000;" onclick="selectCoreChip(5, this)">5</div>
+                    <div class="chip active" style="background:#9b59b6; color:#fff;" onclick="selectCoreChip(20, this)">20</div>
+                    <div class="chip" style="background:#2980b9; color:#fff;" onclick="selectCoreChip(100, this)">100</div>
+                    <div class="chip" style="background:#27ae60; color:#fff;" onclick="selectCoreChip(500, this)">500</div>
+                </div>
+
+                <button id="main-aviator-action" class="z-btn btn-red" style="width:100%; padding:15px; font-size:15px;" onclick="handleAviatorAction()">WAITING FOR NEXT ROUND</button>
+            </div>
+        </div>
+
+        <!-- WALLET CORE -->
+        <div id="v-wallet" class="view-content">
+            <h4 style="font-size:12px; color:var(--text-g); text-transform:uppercase; margin-bottom:12px;">Gateway Node Banking</h4>
+            <div style="background:var(--bg-panel); padding:15px; border-radius:6px; border:1px solid var(--border); margin-bottom:15px;">
+                <span style="font-size:11px; color:var(--text-g);">Telebirr Account Node</span>
+                <h3 style="color:var(--gold); font-family:'Oswald', sans-serif; font-size:22px; margin:2px 0;">0954406366</h3>
+                <p style="font-size:13px; font-weight:bold;">Operator: Temesgen Ayenew</p>
+            </div>
+            <input type="number" id="tx-amt" class="auth-input" placeholder="Transaction Value (ETB)" style="margin-bottom:10px;">
+            <input type="text" id="tx-id" class="auth-input" placeholder="Reference ID / Cashout Wallet Node" style="margin-bottom:12px;">
+            <div style="display:flex; gap:10px;">
+                <button class="z-btn btn-green" style="flex:1;" onclick="dispatchTransaction('deposit')">DEPOSIT</button>
+                <button class="z-btn btn-red" style="flex:1;" onclick="dispatchTransaction('withdraw')">CASHOUT</button>
+            </div>
+        </div>
+
+        <!-- DOCK SYSTEM NAV -->
+        <div class="nav-dock">
+            <div class="dock-btn active" onclick="switchDock('v-arena', this)"><i class="fa-solid fa-layer-group"></i><span>Arena</span></div>
+            <div class="dock-btn" onclick="switchDock('v-wallet', this)"><i class="fa-solid fa-wallet"></i><span>Wallet</span></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://wjlmltebrzeikhqevryr.supabase.co";
+        const API_KEY = "sb_publishable_5lagxwrv2-51pXYYcWv7ug_81CBMSHL";
+        let supabaseClient;
+        let profileNode = null;
+        let globalSelectedBet = 20;
+
+        // MULTI-CHANNEL GRAPHIC SOUND ENGINE
+        const soundMixer = {
+            click: new Audio("https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav"),
+            wheel: new Audio("https://assets.mixkit.co/active_storage/sfx/2019/2019-84.wav"),
+            win: new Audio("https://assets.mixkit.co/active_storage/sfx/1435/1435-84.wav"),
+            lose: new Audio("https://assets.mixkit.co/active_storage/sfx/2513/2513-84.wav")
+        };
+        function triggerSound(key) { try{ if(soundMixer[key]) { soundMixer[key].currentTime=0; soundMixer[key].play().catch(()=>{}); } }catch(e){} }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            try { supabaseClient = window.supabase.createClient(API_URL, API_KEY, { auth: { persistSession: false } }); } catch(e){}
+            assembleKenoLayout();
+            assembleRouletteLayout();
+            initializeSystemLoops();
+        });
+
+        function toggleGate(target) {
+            document.getElementById('pane-log').style.display = target==='log'?'block':'none';
+            document.getElementById('pane-reg').style.display = target==='reg'?'block':'none';
+        }
+
+        function triggerSplash(moduleKey, header, icon) {
+            triggerSound('click');
+            const splash = document.getElementById('app-splash');
+            document.getElementById('splash-title').innerText = header;
+            document.getElementById('splash-ico').innerText = icon;
+            splash.classList.add('active');
+            setTimeout(() => {
+                splash.classList.remove('active');
+                openModule(moduleKey);
+            }, 1500);
+        }
+
+        async function executeSystemLogin() {
+            const ph = document.getElementById('in-phone').value.trim();
+            const ps = document.getElementById('in-pass').value.trim();
+            try {
+                let { data: u } = await supabaseClient.from('users').select('*').eq('telegram_id', ph).maybeSingle();
+                if(u && u.password === ps) {
+                    profileNode = u; triggerSound('win'); launchUniverse();
+                } else { triggerSound('lose'); alert("Authentication failure."); }
+            } catch(e) { alert("Infrastructure timeout."); }
+        }
+
+        async function executeSystemRegister() {
+            const ph = document.getElementById('rg-phone').value.trim();
+            const ps = document.getElementById('rg-pass').value.trim();
+            if(!ph || !ps) return alert("Fill node properties.");
+            try {
+                const nodeRef = "Z" + ph.substring(ph.length - 4);
+                const payload = { telegram_id: ph, password: ps, balance: 50.00, invite_code: nodeRef };
+                let { data: created } = await supabaseClient.from('users').insert([payload]).select().maybeSingle();
+                profileNode = created || payload;
+                triggerSound('win'); launchUniverse();
+            } catch(e) { alert("Deployment error."); }
+        }
+
+        function launchUniverse() {
+            document.getElementById('gateway-auth').style.display = 'none';
+            document.getElementById('app-universe').style.opacity = '1';
+            document.getElementById('app-universe').style.pointerEvents = 'auto';
+            refreshBalanceDisplay();
+        }
+
+        function refreshBalanceDisplay() {
+            if(profileNode) document.getElementById('core-balance').innerText = parseFloat(profileNode.balance).toFixed(2);
+        }
+
+        function switchDock(vId, el) {
+            triggerSound('click');
+            document.querySelectorAll('.view-content').forEach(v=>v.classList.remove('active'));
+            document.querySelectorAll('.dock-btn').forEach(d=>d.classList.remove('active'));
+            document.getElementById(vId).classList.add('active');
+            el.classList.add('active');
+            if(vId === 'v-arena') closeModule();
+        }
+
+        function selectCoreChip(val, el) {
+            triggerSound('click');
+            globalSelectedBet = val;
+            document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function openModule(key) {
+            document.getElementById('v-arena').style.display = 'none';
+            document.getElementById('mod-keno').style.display = key==='keno'?'block':'none';
+            document.getElementById('mod-roulette').style.display = key==='roulette'?'block':'none';
+            document.getElementById('mod-aviator').style.display = key==='aviator'?'block':'none';
+        }
+
+        function closeModule() {
+            document.getElementById('mod-keno').style.display = 'none';
+            document.getElementById('mod-roulette').style.display = 'none';
+            document.getElementById('mod-aviator').style.display = 'none';
+            document.getElementById('v-arena').style.display = 'block';
+        }
+
+        /* ------------------ 1. REAL-TIME SYNCHRONIZED TIMERS & LOOPS ------------------ */
+        let kenoTime = 30;
+        let rouletteTime = 20;
+        function initializeSystemLoops() {
+            setInterval(() => {
+                // Keno Loop
+                kenoTime--;
+                if(kenoTime <= 0) { kenoTime = 30; executeGlobalKenoDraw(); }
+                document.getElementById('keno-timer').innerText = `00:${kenoTime < 10 ? '0' + kenoTime : kenoTime}`;
+
+                // Roulette Loop
+                rouletteTime--;
+                if(rouletteTime <= 0) { rouletteTime = 25; executeGlobalRouletteDraw(); }
+                document.getElementById('roulette-timer').innerText = `00:${rouletteTime < 10 ? '0' + rouletteTime : rouletteTime}`;
+            }, 1000);
+
+            // Start Continuous Aviator Simulation
+            executeAviatorFlightEngine();
+        }
+
+        /* ------------------ 2. KENO 80 SYSTEM DEVELOPMENT ------------------ */
+        let lockedKenoTickets = [];
+        function assembleKenoLayout() {
+            const b = document.getElementById('keno-board-container'); b.innerHTML = "";
+            for(let i=1; i=80; i++) {
+                const s = document.createElement('div'); s.className = "keno-spot"; s.id = `k-spot-${i}`; s.innerText = i;
+                s.onclick = () => {
+                    triggerSound('click');
+                    if(s.classList.contains('selected')) { s.classList.remove('selected'); lockedKenoTickets = lockedKenoTickets.filter(x=>x!==i); }
+                    else { if(lockedKenoTickets.length < 10) { s.classList.add('selected'); lockedKenoTickets.push(i); } }
+                };
+                b.appendChild(s);
+            }
+        }
+        function registerKenoBet() {
+            if(lockedKenoTickets.length < 2) return alert("Select 2-10 spots.");
+            triggerSound('click'); alert("Ticket locked for upcoming live draw.");
+        }
+        function executeGlobalKenoDraw() {
+            document.querySelectorAll('.keno-spot').forEach(s=>s.classList.remove('drawn','hit'));
+            let drops = []; while(drops.length < 20) { let r = Math.floor(Math.random()*80)+1; if(!drops.includes(r)) drops.push(r); }
+            
+            drops.forEach(d => {
+                const el = document.getElementById(`k-spot-${d}`);
+                if(el) { if(el.classList.contains('selected')) el.classList.add('hit'); else el.classList.add('drawn'); }
+            });
+
+            if(lockedKenoTickets.length >= 2 && profileNode) {
+                let matches = lockedKenoTickets.filter(x=>drops.includes(x)).length;
+                let prize = matches >= 2 ? globalSelectedBet * (matches * 1.8) : 0;
+                profileNode.balance = (profileNode.balance - globalSelectedBet) + prize;
+                if(prize > 0) triggerSound('win'); else triggerSound('lose');
+                refreshBalanceDisplay();
+            }
+            const hist = document.getElementById('keno-history');
+            hist.innerHTML = `<div class="history-node">${drops[0]}</div>` + hist.innerHTML;
+            lockedKenoTickets = []; document.querySelectorAll('.keno-spot').forEach(s=>s.classList.remove('selected'));
+        }
+
+        /* ------------------ 3. FULL ROULETTE INTERACTIVE SYSTEM ------------------ */
+        let targetedRoulettePockets = [];
+        const redPockets = [1,3,5,7,9,12,14,16,19,21,23,25,27,30,32,34,36];
+        function assembleRouletteLayout() {
+            const table = document.getElementById('roulette-table-numbers'); table.innerHTML = "";
+            const zero = document.createElement('div'); zero.className = "roulette-num-cell r-zero"; zero.innerText = "0";
+            zero.onclick = () => selectRoulettePocket(0, zero);
+            table.appendChild(zero);
+
+            for(let i=1; i<=36; i++) {
+                const cell = document.createElement('div');
+                const isRed = redPockets.includes(i);
+                cell.className = `roulette-num-cell ${isRed ? 'r-red' : 'r-black'}`;
+                cell.innerText = i;
+                cell.onclick = () => selectRoulettePocket(i, cell);
+                table.appendChild(cell);
+            }
+        }
+        function selectRoulettePocket(num, el) {
+            triggerSound('click');
+            if(el.classList.contains('active-bet')) {
+                el.classList.remove('active-bet'); targetedRoulettePockets = targetedRoulettePockets.filter(x=>x!==num);
+            } else {
+                el.classList.add('active-bet'); targetedRoulettePockets.push(num);
+            }
+        }
+        function addSideRouletteBet(type) { triggerSound('click'); targetedRoulettePockets.push(type); alert(`Side Bet ${type} Active.`); }
+        
+        function executeGlobalRouletteDraw() {
+            triggerSound('wheel');
+            const pocketOutcome = Math.floor(Math.random()*37);
+            const isRed = redPockets.includes(pocketOutcome);
+            const isEven = pocketOutcome % 2 === 0 && pocketOutcome !== 0;
+
+            let totalPayout = 0;
+            let totalRisk = globalSelectedBet * (targetedRoulettePockets.length || 1);
+
+            if(targetedRoulettePockets.length > 0 && profileNode) {
+                targetedRoulettePockets.forEach(bet => {
+                    if(bet === pocketOutcome) totalPayout += globalSelectedBet * 35;
+                    if(bet === 'RED' && isRed) totalPayout += globalSelectedBet * 2;
+                    if(bet === 'BLACK' && !isRed && pocketOutcome!==0) totalPayout += globalSelectedBet * 2;
+                    if(bet === 'EVEN' && isEven) totalPayout += globalSelectedBet * 2;
+                });
+                profileNode.balance = (profileNode.balance - totalRisk) + totalPayout;
+                if(totalPayout > 0) triggerSound('win'); else triggerSound('lose');
+                refreshBalanceDisplay();
+            }
+
+            const hist = document.getElementById('roulette-history');
+            const nodeClass = pocketOutcome===0?'green-node':isRed?'red-node':'black-node';
+            hist.innerHTML = `<div class="history-node ${nodeClass}">${pocketOutcome}</div>` + hist.innerHTML;
+
+            targetedRoulettePockets = [];
+            document.querySelectorAll('.roulette-num-cell').forEach(c=>c.classList.remove('active-bet'));
+        }
+
+        /* ------------------ 4. PROFESSIONAL AVIATOR FLIGHT INFRASTRUCTURE ------------------ */
+        let avActiveFactor = 1.0;
+        let isFlightRunning = false;
+        let userInFlight = false;
+        let avTimerId = null;
+
+        function executeAviatorFlightEngine() {
+            if(isFlightRunning) return;
+            isFlightRunning = true;
+            avActiveFactor = 1.0;
+            userInFlight = false;
+
+            document.getElementById('main-aviator-action').innerText = "PLACE NEXT BET";
+            document.getElementById('main-aviator-action').className = "z-btn btn-cyan";
+
+            setTimeout(() => {
+                // Takeoff Trigger
+                if(document.getElementById('auto-bet-enabled').checked) { handleAviatorAction(); }
+                document.getElementById('main-aviator-action').innerText = "CASH OUT";
+                document.getElementById('main-aviator-action').className = "z-btn btn-green";
+
+                const crashLimit = (Math.random() * 4 + 1.02).toFixed(2);
+                
+                avTimerId = setInterval(() => {
+                    avActiveFactor += 0.03;
+                    document.getElementById('av-live-factor').innerText = avActiveFactor.toFixed(2) + "x";
+                    
+                    // Flight Vector Animation Coordinate Physics
+                    const plane = document.getElementById('av-vector-plane');
+                    plane.style.bottom = (15 + (avActiveFactor * 12)) + "px";
+                    plane.style.left = (15 + (avActiveFactor * 20)) + "px";
+
+                    // Auto Cashout System Verification
+                    if(userInFlight && document.getElementById('auto-cash-enabled').checked) {
+                        const targetTrigger = parseFloat(document.getElementById('auto-cash-trigger').value);
+                        if(avActiveFactor >= targetTrigger) { handleAviatorAction(); }
+                    }
+
+                    if(avActiveFactor >= crashLimit) {
+                        clearInterval(avTimerId);
+                        triggerSound('lose');
+                        document.getElementById('av-live-factor').innerText = "💥 FLEW AWAY";
+                        const hist = document.getElementById('aviator-history');
+                        hist.innerHTML = `<div class="history-node" style="color:var(--red);">${crashLimit}x</div>` + hist.innerHTML;
+                        
+                        if(userInFlight && profileNode) { profileNode.balance -= globalSelectedBet; refreshBalanceDisplay(); }
+                        
+                        isFlightRunning = false;
+                        setTimeout(executeAviatorFlightEngine, 3000); // 3 Sec interval for next fleet initialization
+                    }
+                }, 100);
+            }, 4000); // 4 Sec betting allocation time frame
+        }
+
+        function handleAviatorAction() {
+            triggerSound('click');
+            if(!userInFlight && isFlightRunning && avActiveFactor === 1.0) {
+                userInFlight = true;
+                document.getElementById('main-aviator-action').innerText = "WAITING FLIGHT...";
+            } else if(userInFlight && isFlightRunning) {
+                userInFlight = false;
+                const profit = globalSelectedBet * avActiveFactor;
+                if(profileNode) { profileNode.balance = (profileNode.balance - globalSelectedBet) + profit; refreshBalanceDisplay(); }
+                triggerSound('win');
+                document.getElementById('main-aviator-action').innerText = "CASHED OUT SUCCESS";
+                document.getElementById('main-aviator-action').className = "z-btn" ;
+            }
+        }
+
+        async function dispatchTransaction(type) {
+            triggerSound('click');
+            const v = parseFloat(document.getElementById('tx-amt').value);
+            const r = document.getElementById('tx-id').value.trim();
+            if(!v || !r) return alert("Complete node banking entries.");
+            try {
+                await supabaseClient.from('transactions').insert([{ telegram_id: profileNode.telegram_id, type: type, amount: v, status: 'pending', txid: r }]);
+                alert("Payload dispatched to network validators.");
+            } catch(e) { alert("Execution crash."); }
+        }
+    </script>
+</body>
+</html>
 
         /* ----- CHIP SELECTOR (ROULETTE STYLE) ----- */
         .chip-rack { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
